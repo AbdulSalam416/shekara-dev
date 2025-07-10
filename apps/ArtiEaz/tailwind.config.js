@@ -4,20 +4,37 @@
 // Instead you will have to manually add the dependent paths to be included.
 // For example
 // ../libs/buttons/**/*.{ts,tsx,js,jsx,html}',                 <--- Adding a shared lib
-// !../libs/buttons/**/*.{stories,spec}.{ts,tsx,js,jsx,html}', <--- Skip adding spec/stories files from shared lib
+// !../libs/buttons/**/*.{stories,spec}.{ts,tsx,js,jsx,html}', <--- Skip adding spec/stories styles from shared lib
 
 // If you are **not** using `--turbo` you can uncomment both lines 1 & 19.
 // A discussion of the issue can be found: https://github.com/nrwl/nx/issues/26510
 
+// /** @type {import('tailwindcss').Config} */
+// module.exports = {
+//   content: [
+//     './{src,pages,components,app}/**/*.{ts,tsx,js,jsx,html}',
+//     '!./{src,pages,components,app}/**/*.{stories,spec}.{ts,tsx,js,jsx,html}',
+//     //     ...createGlobPatternsForDependencies(__dirname)
+//   ],
+//   theme: {
+//     extend: {},
+//   },
+//   plugins: [],
+// };
+
+
+const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
+const { join, dirname } = require('path');
+const taildwindBaseConfig = require('../../tailwind.config');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  ...taildwindBaseConfig,
   content: [
-    './{src,pages,components,app}/**/*.{ts,tsx,js,jsx,html}',
-    '!./{src,pages,components,app}/**/*.{stories,spec}.{ts,tsx,js,jsx,html}',
-    //     ...createGlobPatternsForDependencies(__dirname)
+    join(
+      __dirname,
+      '{src,pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+    ),
+    ...createGlobPatternsForDependencies(__dirname),
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
 };

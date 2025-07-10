@@ -1,0 +1,8 @@
+{
+  "name": "@app-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "root-lib/ui/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
