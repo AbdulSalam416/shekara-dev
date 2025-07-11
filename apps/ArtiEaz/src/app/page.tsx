@@ -1,6 +1,8 @@
-import { Button } from '@app-ui';
-import { NavBar } from '@/components/core/Navbar';
-import { Hero } from '@/components/core/Hero';
+import { NavBar } from '../components/core/Navbar';
+import { Hero } from '../components/core/Hero';
+import { ToolsSection } from '../components/core/ToolsSection';
+import { Footer } from '../components/core/Footer';
+import { Testimonials } from '../components/core/Testimonials';
 
 export default function Index() {
   /*
@@ -12,7 +14,9 @@ export default function Index() {
     <div>
       <NavBar />
       <Hero/>
-        <Button/>
+      <ToolsSection/>
+      <Testimonials/>
+      <Footer/>
     </div>
   );
 }

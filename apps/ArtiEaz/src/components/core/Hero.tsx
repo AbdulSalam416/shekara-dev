@@ -1,5 +1,5 @@
-import { siteConfig } from '@/siteConfig';
 import { Button } from '@app-ui';
+import { siteConfig } from '../../siteConfig';
 
 export const Hero = () => {
   return (

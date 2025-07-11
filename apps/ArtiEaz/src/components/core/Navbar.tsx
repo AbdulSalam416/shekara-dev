@@ -1,5 +1,5 @@
-import { siteConfig } from '@/siteConfig';
 import { Button } from '@app-ui';
+import { siteConfig } from '../../siteConfig';
 
 export const NavBar = () => {
   return (
@@ -8,7 +8,6 @@ export const NavBar = () => {
         <div className="text-2xl font-bold text-gray-900">
           {siteConfig.siteName}
         </div>
-
         <div className="flex items-center space-x-6">
           {siteConfig.nav.map((item, index) => (
             item.type === "button" ? (

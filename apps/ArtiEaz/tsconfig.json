@@ -6,7 +6,11 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -16,13 +20,14 @@
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["jest", "node"],
-    "outDir": "dist",
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    //
+    "types": [
+      "jest",
+      "node"
+    ],
+    "skipLibCheck": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "isolatedModules": true
   },
   "include": [
     "../../apps/ArtiEaz/.next/types/**/*.ts",
@@ -46,9 +51,5 @@
     "eslint.config.cjs",
     "eslint.config.mjs"
   ],
-  "references": [
-    {
-      "path": "../../root-lib/ui"
-    }
-  ]
+  "references": []
 }
