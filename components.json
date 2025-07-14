@@ -10,8 +10,8 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "root-lib/ui/src/components",
-    "utils": "root-lib/ui/src/utils"
+    "components": "root-lib/ui/src/shadCnComponents",
+    "utils": "@app-ui/shadCnComponents"
   },
   "iconLibrary": "lucide"
 }

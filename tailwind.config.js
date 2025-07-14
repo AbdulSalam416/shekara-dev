@@ -55,5 +55,8 @@ module.exports = {
           '"Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       },
     },
+    backgroundImage :{
+      'gradient-blue': 'linear-gradient(95deg, #155dfc 0%, #9810fa 100%)',
+    }
   },
   plugins: [require('tailwindcss-animate')]};
