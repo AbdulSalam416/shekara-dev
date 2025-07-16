@@ -12,8 +12,8 @@
 // /** @type {import('tailwindcss').Config} */
 // module.exports = {
 //   content: [
-//     './{src,pages,shadCnComponents,app}/**/*.{ts,tsx,js,jsx,html}',
-//     '!./{src,pages,shadCnComponents,app}/**/*.{stories,spec}.{ts,tsx,js,jsx,html}',
+//     './{src,pages,components,app}/**/*.{ts,tsx,js,jsx,html}',
+//     '!./{src,pages,components,app}/**/*.{stories,spec}.{ts,tsx,js,jsx,html}',
 //     //     ...createGlobPatternsForDependencies(__dirname)
 //   ],
 //   theme: {
@@ -33,7 +33,7 @@ module.exports = {
   content: [
     join(
       __dirname,
-      '{src,pages,shadCnComponents}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      '{src,pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],

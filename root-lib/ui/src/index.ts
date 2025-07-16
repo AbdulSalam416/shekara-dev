@@ -1,7 +1,10 @@
 export * from './lib/ui';
-export * from './shadCnComponents/ui/button';
-export * from './shadCnComponents/ui/card';
-export * from './shadCnComponents/ui/badge';
+export * from './components/ui/button';
+export * from './components/ui/card';
+export * from './components/ui/badge';
+export * from './components/ui/iconLabel';
+export * from './lib/icon-registry'
+
 
 
 

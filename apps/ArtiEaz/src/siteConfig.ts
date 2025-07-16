@@ -1,18 +1,20 @@
 export const siteConfig = {
   "siteName": "ArtiEaz",
   "nav": [
-    { "label": "Product", "href": "/product" },
-    { "label": "Pricing", "href": "/pricing" },
-    { "label": "Resources", "href": "/resources" },
-    { "label": "Get Started", "href": "/get-started", "type": "button" },
-    { "label": "Log In", "href": "/login", "type": "button" }
+    { "label": "Features", "href": "/features" },
+    { "label": "Benefits", "href": "/pricing" },
+    { "label": "Testimonials", "href": "/resources" },
+    // { "label": "Get Started", "href": "/get-started", "type": "button" },
+    // { "label": "Log In", "href": "/login", "type": "button" }
   ],
   "hero": {
-    "title": "AI Tools to Make Coding Simple",
+    "title_l1": "AI Tools to Make",
+    "title_l2": "Coding Simple",
     "subtitle": "CodeAssist is a suite of AI-powered micro-tools designed to streamline your development workflow. Whether you're debugging, writing scripts, or learning new skills, we’ve got you covered.",
-    "ctaText": "Get Started",
-    "ctaLink": "/get-started",
-    "bgImage" : "/hero_bg"
+    "ctaText": "Support Developer",
+    "ctaLink": "/support",
+    "bgImage" : "/hero_bg",
+    "highlights": [{'icon': "Code", "text":"Smart Code Analysis"}, {'icon': "Code", "text":"Instant Solutions"}, {'icon': "Code", "text":"AI-Powered Learning"}]
   },
   "toolsSection": {
     "title": "Boost Your Productivity with AI-Powered Tools",
