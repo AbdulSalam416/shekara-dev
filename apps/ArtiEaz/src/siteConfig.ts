@@ -14,7 +14,7 @@ export const siteConfig = {
     "ctaText": "Support Developer",
     "ctaLink": "/support",
     "bgImage" : "/hero_bg",
-    "highlights": [{'icon': "Code", "text":"Smart Code Analysis"}, {'icon': "Code", "text":"Instant Solutions"}, {'icon': "Code", "text":"AI-Powered Learning"}]
+    "highlights": [{'icon': "Code", "text":"Smart Code Analysis", "variant": 'primary'}, {'icon': "Zap", "text":"Instant Solutions" , "variant": "secondary"}, {'icon': "Sparkles", "text":"AI-Powered Learning", "variant": "tertiary"}]
   },
   "toolsSection": {
     "title": "Boost Your Productivity with AI-Powered Tools",

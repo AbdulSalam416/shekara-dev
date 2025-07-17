@@ -7,6 +7,7 @@ import {
   User,
   Mail,
   Phone,
+  Sparkles
 } from 'lucide-react';
 
 export const iconRegistry = {
@@ -18,6 +19,7 @@ export const iconRegistry = {
   User,
   Mail,
   Phone,
+  Sparkles,
 } as const;
 
 export type IconName = keyof typeof iconRegistry;

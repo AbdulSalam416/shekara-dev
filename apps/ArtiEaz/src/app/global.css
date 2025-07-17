@@ -10,8 +10,8 @@
 
   /* Accent Colors */
   --accent-default: #155dfc;    /* Example: #094372;  bright accent color */
-  --accent-secondary: #adcbd0;   /* Example: dull accent with low saturation */
-  --accent-tertiary: #4db8ff;    /* Example: dull accent with high saturation */
+  --accent-secondary: #9810fa;   /* Example: dull accent with low saturation */
+  --accent-tertiary: #4a5565;    /* Example: dull accent with high saturation */
   --accent-contrast: #ffffff;    /* Example: accent contrast color */
 
 

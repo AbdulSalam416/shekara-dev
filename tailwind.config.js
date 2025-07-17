@@ -62,4 +62,8 @@ module.exports = {
 
     }
   },
+  corePlugins: {
+
+    backgroundOpacity: true,
+  },
   plugins: [require('tailwindcss-animate')]};

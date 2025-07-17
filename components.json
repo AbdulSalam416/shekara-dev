@@ -11,7 +11,7 @@
   },
   "aliases": {
     "components": "root-lib/ui/src/components",
-    "utils": "@app-ui/components"
+    "utils": "root-lib/ui/src/components/utils"
   },
   "iconLibrary": "lucide"
 }
