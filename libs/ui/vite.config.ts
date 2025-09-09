@@ -6,7 +6,7 @@ import * as path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/root-lib/ui',
+  cacheDir: '../../node_modules/.vite/libs/ui',
   plugins: [
     react(),
     dts({
@@ -30,7 +30,7 @@ export default defineConfig(() => ({
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
-      name: '@app-ui',
+      name: '@shekara-dev/ui',
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.

@@ -1,21 +1,18 @@
 import { NavBar } from '../components/core/Navbar';
-import { Hero } from '../components/core/Hero';
+import { Cta } from '../components/core/Cta';
 import { ToolsSection } from '../components/core/ToolsSection';
 import { Footer } from '../components/core/Footer';
 import { Testimonials } from '../components/core/Testimonials';
+import { Hero } from '../components/core/Hero';
 
 export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
+  
   return (
     <div>
       <NavBar />
       <Hero/>
       <ToolsSection/>
-      <Testimonials/>
+      <Cta/>
       <Footer/>
     </div>
   );

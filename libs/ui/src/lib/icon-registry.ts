@@ -7,7 +7,15 @@ import {
   User,
   Mail,
   Phone,
-  Sparkles
+  Sparkles,
+  Terminal,
+  Search,
+  GitBranch,
+  CircleQuestionMark,
+  TrendingUp,
+  Bell,
+  BarChart,
+  Users
 } from 'lucide-react';
 
 export const iconRegistry = {
@@ -15,13 +23,19 @@ export const iconRegistry = {
   Star,
   Zap,
   Home,
-  Settings,
+  Settings,CircleQuestionMark,
   User,
+  GitBranch,
   Mail,
   Phone,
   Sparkles,
+  Terminal,
+  Search,
+  TrendingUp,
+  Bell,
+  BarChart,
+  Users
 } as const;
 
 export type IconName = keyof typeof iconRegistry;
-
 export const getIcon = (name: IconName) => iconRegistry[name];

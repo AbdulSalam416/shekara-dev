@@ -1,90 +1,100 @@
 export const siteConfig = {
-  "siteName": "ArtiEaz",
-  "nav": [
-    { "label": "Features", "href": "/features" },
-    { "label": "Benefits", "href": "/pricing" },
-    { "label": "Testimonials", "href": "/resources" },
-    // { "label": "Get Started", "href": "/get-started", "type": "button" },
-    // { "label": "Log In", "href": "/login", "type": "button" }
+  siteName: 'Koko & Koobi',
+  nav: [
+    { label: 'Features', href: '#features' },
+    { label: 'Pricing', href: '/' },
   ],
-  "hero": {
-    "title_l1": "AI Tools to Make",
-    "title_l2": "Coding Simple",
-    "subtitle": "CodeAssist is a suite of AI-powered micro-tools designed to streamline your development workflow. Whether you're debugging, writing scripts, or learning new skills, we’ve got you covered.",
-    "ctaText": "Support Developer",
-    "ctaLink": "/support",
-    "bgImage" : "/hero_bg",
-    "highlights": [{'icon': "Code", "text":"Smart Code Analysis", "variant": 'primary'}, {'icon': "Zap", "text":"Instant Solutions" , "variant": "secondary"}, {'icon': "Sparkles", "text":"AI-Powered Learning", "variant": "tertiary"}]
-  },
-  "toolsSection": {
-    "title": "Boost Your Productivity with AI-Powered Tools",
-    "subtitle": "Our suite of micro-tools is designed to tackle common coding challenges, saving you time and effort.",
-    "tools": [
-      {
-        "name": "Shell Scripting Tutor",
-        "description": "Learn shell scripting with interactive lessons and real-time feedback.",
-        "status": "live"
-      },
-      {
-        "name": "Regex Builder",
-        "description": "Build and test regular expressions effortlessly with our intuitive interface.",
-        "status": "coming soon"
-      },
-      {
-        "name": "Git Conflict Resolver",
-        "description": "Resolve Git conflicts quickly and efficiently with AI-powered suggestions.",
-        "status": "coming soon"
-
-      },
-      {
-        "name": "Command Explain Tool",
-        "description": "Understand complex commands with clear explanations and examples.",
-        "status": "coming soon"
-
-      },
-      {
-        "name": "Learning Path Navigator",
-        "description": "Navigate your learning journey with personalized recommendations and resources.",
-        "status": "coming soon"
-      }
-    ]
-  },
-  "testimonials": [
-    {
-      "quote": "CodeAssist has revolutionized my workflow. The Shell Scripting Tutor is a game-changer!",
-      "name": "Sarah Chen",
-      "title": "Software Engineer",
-      "img" : "/testimony_1.png"
-    },
-    {
-      "quote": "The Regex Builder is incredibly intuitive and has saved me countless hours of debugging.",
-      "name": "David Lee",
-      "title": "Full-Stack Developer",
-      "img" : "/testimony_2.png"
-
-    },
-    {
-      "quote": "I love the Command Explain Tool. It’s like having a coding mentor right at my fingertips.",
-      "name": "Emily Rodriguez",
-      "title": "Data Scientist",
-      "img3" : "/testimony_1.png"
-
-    }
-  ],
-  "footerCta": {
-    "title": "Ready to Simplify Your Coding?",
-    "buttonText": "Get Started",
-    "buttonLink": "/get-started"
-
-  },
-  "footer": {
-    "links": [
-      { "label": "Product", "href": "/product" },
-      { "label": "Pricing", "href": "/pricing" },
-      { "label": "Resources", "href": "/resources" },
-      { "label": "Terms of Service", "href": "/terms" },
-      { "label": "Privacy Policy", "href": "/privacy" }
+  hero: {
+    title_l1: 'Never Overpay at the',
+    title_l2: 'Market Again.',
+    subtitle:
+      "Koko & Koobi brings you hyper-local market insights on daily commodity prices, trends, and forecasts. From farmers to traders to households, everyone deserves price transparency.",
+    ctaText: 'Download the App',
+    ctaLink: '/get-started',
+    bgImage: '/hero_bg',
+    highlights: [
+      { icon: 'TrendingUp', text: 'Live Price Data', variant: 'primary' },
+      { icon: 'Bell', text: 'Smart Alerts', variant: 'secondary' },
+      { icon: 'Users', text: 'Farmer & Trader Friendly', variant: 'tertiary' },
     ],
-    "copyright": "© 2023 CodeAssist. All rights reserved."
-  }
-}
+  },
+  toolsSection: {
+    title: 'Features That Matter',
+    subtitle:
+      'Designed to give farmers, traders, and households the insights they need to make better decisions.',
+    tools: [
+      {
+        name: 'Daily Price Updates',
+        description:
+          'Access real-time prices of key commodities across local markets.',
+        status: 'live',
+        icon: 'BarChart',
+      },
+      {
+        name: 'Price Trend Forecasts',
+        description:
+          'See where prices are heading with simple predictions and market insights.',
+        status: 'coming soon',
+        icon: 'TrendingUp',
+      },
+      {
+        name: 'SMS & WhatsApp Alerts',
+        description:
+          'Get notified instantly when prices change, even without internet.',
+        status: 'coming soon',
+        icon: 'Bell',
+      },
+      {
+        name: 'Buyer–Seller Connections',
+        description:
+          'Connect directly with verified farmers, wholesalers, and market traders.',
+        status: 'coming soon',
+        icon: 'Users',
+      },
+    ],
+  },
+  testimonials: [
+    {
+      quote:
+        'With Koko & Koobi, I know the price of maize before I even step into the market. No more surprises!',
+      name: 'Abdul Rahman',
+      title: 'Farmer, Tamale',
+      img: '/testimony_1.png',
+    },
+    {
+      quote:
+        'The daily tomato price alerts help me plan my stock better and avoid losses.',
+      name: 'Akosua Mensah',
+      title: 'Market Trader, Accra',
+      img: '/testimony_2.png',
+    },
+  
+    {
+      quote:
+        'Finally, price transparency for the everyday Ghanaian household. This is long overdue.',
+      name: 'Kwame Boateng',
+      title: 'Household Consumer',
+      img: '/testimony_3.png',
+    },
+  ],
+
+  cta:{
+    title: 'Ready to Save Money?',
+    subtitle:'Join thousands of Ghanaians making smarter decisions. Download Koko & Koobi today, it\'s free!',
+    ctaText: 'Download For Free',
+    ctaLink: '/get-started',
+  },
+  footerCta: {
+    title: 'Transparancy for every Ghanaian. From the farm to the market to your kitchen.',
+  },
+  footer: {
+    links: [
+      { label: 'Features', href: '/features' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Resources', href: '/resources' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Privacy Policy', href: '/privacy' },
+    ],
+    copyright: '© 2025 Koko & Koobi. All rights reserved.',
+  },
+};

@@ -10,7 +10,7 @@
       "path": "./apps/ArtiEaz"
     },
     {
-      "path": "./root-lib/ui"
+      "path": "./libs/ui"
     }
   ]
 }

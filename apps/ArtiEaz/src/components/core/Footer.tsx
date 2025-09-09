@@ -1,21 +1,10 @@
-import {Button} from '@app-ui'
 import { siteConfig } from '../../siteConfig';
 
 export const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            {siteConfig.footerCta.title}
-          </h2>
-          <Button
-            size="lg"
-            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-          >
-            {siteConfig.footerCta.buttonText}
-          </Button>
-        </div>
+      
       </div>
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,10 +14,9 @@ export const Footer = () => {
                 {siteConfig.siteName}
               </h3>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Empowering developers with AI-powered tools to simplify coding and boost productivity.
+              {siteConfig.footerCta.title}
               </p>
             </div>
-
             <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">

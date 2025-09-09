@@ -1,26 +1,11 @@
-import {  Code, Terminal, GitBranch, HelpCircle, MapPin } from 'lucide-react';
-import {Card, CardHeader, CardDescription, CardContent, Button, CardTitle,Badge} from  '@app-ui'
+
+import { DynamicIcon, IconName } from '@shekara-dev/ui';
+import {Card, CardHeader, CardDescription, CardContent, Button, CardTitle,Badge} from  '@shekara-dev/ui'
 import { siteConfig } from '../../siteConfig';
 export const ToolsSection = () => {
-  const getToolIcon = (name: string) => {
-    switch (name) {
-      case 'Shell Scripting Tutor':
-        return <Terminal className="w-8 h-8 text-blue-600" />;
-      case 'Regex Builder':
-        return <Code className="w-8 h-8 text-purple-600" />;
-      case 'Git Conflict Resolver':
-        return <GitBranch className="w-8 h-8 text-green-600" />;
-      case 'Command Explain Tool':
-        return <HelpCircle className="w-8 h-8 text-orange-600" />;
-      case 'Learning Path Navigator':
-        return <MapPin className="w-8 h-8 text-red-600" />;
-      default:
-        return <Code className="w-8 h-8 text-gray-600" />;
-    }
-  };
-
+  const iconColors = ['#00c950', '#2b7fff', '#ad46ff', '#ff6900']
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-white" id="features">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
@@ -30,14 +15,13 @@ export const ToolsSection = () => {
             {siteConfig.toolsSection.subtitle}
           </p>
         </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {siteConfig.toolsSection.tools.map((tool, index) => (
             <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-blue-200">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg group-hover:scale-110 transition-transform">
-                    {getToolIcon(tool.name)}
+                  <div className={`bg-[${iconColors[index]}] p-2 rounded-md` }>
+                    <DynamicIcon name={tool.icon as IconName} color={'#fff'}/>
                   </div>
                   <Badge
                     variant={tool.status === "live" ? "default" : "secondary"}

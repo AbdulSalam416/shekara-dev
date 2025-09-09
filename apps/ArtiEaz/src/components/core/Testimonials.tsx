@@ -1,5 +1,5 @@
 import { siteConfig } from '../../siteConfig';
-import { Card, CardContent } from '@app-ui';
+import { Card, CardContent } from '@shekara-dev/ui';
 import { Quote, Star } from 'lucide-react';
 
 export const Testimonials = () => {

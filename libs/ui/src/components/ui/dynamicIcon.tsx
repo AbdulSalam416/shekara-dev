@@ -1,13 +1,14 @@
 import { LucideProps } from 'lucide-react';
 import { IconName, iconRegistry } from '../../lib/icon-registry';
 import * as React from 'react';
+import { CardFooter } from './card';
 
 interface DynamicIconProps extends LucideProps {
   name: IconName;
   fallback?: React.ComponentType<LucideProps>;
 }
 
-export const DynamicIcon: React.FC<DynamicIconProps> = ({
+export  const DynamicIcon: React.FC<DynamicIconProps> = ({
                                                           name,
                                                           fallback,
                                                           ...props
@@ -21,3 +22,4 @@ export const DynamicIcon: React.FC<DynamicIconProps> = ({
 
   return <IconComponent {...props} />;
 };
+DynamicIcon.displayName = "DynamicIcon"

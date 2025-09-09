@@ -1,15 +1,13 @@
 
-
-
 :root {
   /* Primary Colors */
-  --primary-default:  #1c253a ;   /* #191919; Primary clear #161a27; */
-  --primary-secondary: #786f68; /* Primary dull with low saturation */
+  --primary-default:  #1D4AF37;   /* ; Primary clear #161a27; */
+  --primary-secondary: #2E8B57; /* Primary dull with low saturation */
   --primary-tertiary: #3a3a3a; /* Primary dull with high saturation */
   --primary-contrast: #faebd7; /* Primary contrast */
 
   /* Accent Colors */
-  --accent-default: #155dfc;    /* Example: #094372;  bright accent color */
+  --accent-default: #C70039;    /* Example: #094372;  bright accent color */
   --accent-secondary: #9810fa;   /* Example: dull accent with low saturation */
   --accent-tertiary: #4a5565;    /* Example: dull accent with high saturation */
   --accent-contrast: #ffffff;    /* Example: accent contrast color */
