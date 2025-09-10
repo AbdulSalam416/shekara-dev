@@ -1,6 +1,6 @@
-import { defineConfig, devices } from '@playwright/test';
-import { nxE2EPreset } from '@nx/playwright/preset';
-import { workspaceRoot } from '@nx/devkit';
+const { defineConfig, devices } = require('@playwright/test');
+const { nxE2EPreset } = require('@nx/playwright/preset');
+const { workspaceRoot } = require('@nx/devkit');
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:3000';
@@ -14,7 +14,7 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:3000';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+module.exports = defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {

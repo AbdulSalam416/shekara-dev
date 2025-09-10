@@ -1,19 +1,18 @@
-import type { Config } from 'jest';
-import nextJest from 'next/jest.js';
+const nextJest = require('next/jest.js');
 
 const createJestConfig = nextJest({
   dir: './',
 });
 
-const config: Config = {
+const config = {
   displayName: '@shekara-dev/koko-koobi-web',
   preset: '../jest.preset.js',
   transform: {
-    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
+    '^(?!.*\\.\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../coverage/koko-koobi-web',
   testEnvironment: 'jsdom',
 };
 
-export default createJestConfig(config);
+module.exports = createJestConfig(config);
