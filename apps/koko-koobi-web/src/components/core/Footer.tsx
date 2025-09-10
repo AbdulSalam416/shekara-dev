@@ -3,9 +3,7 @@ import { siteConfig } from '../../siteConfig';
 export const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
-      
-      </div>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16"></div>
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
@@ -14,7 +12,7 @@ export const Footer = () => {
                 {siteConfig.siteName}
               </h3>
               <p className="text-gray-400 text-lg leading-relaxed">
-              {siteConfig.footerCta.title}
+                {siteConfig.footerCta.title}
               </p>
             </div>
             <div>
@@ -22,7 +20,10 @@ export const Footer = () => {
               <ul className="space-y-2">
                 {siteConfig.footer.links.slice(0, 3).map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-400 hover:text-white transition-colors">
+                    <a
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
                       {link.label}
                     </a>
                   </li>
@@ -35,7 +36,10 @@ export const Footer = () => {
               <ul className="space-y-2">
                 {siteConfig.footer.links.slice(3).map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-400 hover:text-white transition-colors">
+                    <a
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
                       {link.label}
                     </a>
                   </li>

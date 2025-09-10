@@ -8,7 +8,7 @@ export const siteConfig = {
     title_l1: 'Never Overpay at the',
     title_l2: 'Market Again.',
     subtitle:
-      "Koko & Koobi brings you hyper-local market insights on daily commodity prices, trends, and forecasts. From farmers to traders to households, everyone deserves price transparency.",
+      'Koko & Koobi brings you hyper-local market insights on daily commodity prices, trends, and forecasts. From farmers to traders to households, everyone deserves price transparency.',
     ctaText: 'Download the App',
     ctaLink: '/get-started',
     bgImage: '/hero_bg',
@@ -68,7 +68,7 @@ export const siteConfig = {
       title: 'Market Trader, Accra',
       img: '/testimony_2.png',
     },
-  
+
     {
       quote:
         'Finally, price transparency for the everyday Ghanaian household. This is long overdue.',
@@ -78,14 +78,16 @@ export const siteConfig = {
     },
   ],
 
-  cta:{
+  cta: {
     title: 'Ready to Save Money?',
-    subtitle:'Join thousands of Ghanaians making smarter decisions. Download Koko & Koobi today, it\'s free!',
+    subtitle:
+      "Join thousands of Ghanaians making smarter decisions. Download Koko & Koobi today, it's free!",
     ctaText: 'Download For Free',
     ctaLink: '/get-started',
   },
   footerCta: {
-    title: 'Transparancy for every Ghanaian. From the farm to the market to your kitchen.',
+    title:
+      'Transparancy for every Ghanaian. From the farm to the market to your kitchen.',
   },
   footer: {
     links: [

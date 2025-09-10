@@ -1,13 +1,13 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
   "references": [
     {
-      "path": "./apps/ArtiEaz-e2e"
+      "path": "./apps/koko-koobi-web"
     },
     {
-      "path": "./apps/ArtiEaz"
+      "path": "./apps/koko-koobi-web"
     },
     {
       "path": "./libs/ui"

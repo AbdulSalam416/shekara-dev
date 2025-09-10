@@ -17,7 +17,10 @@ export const Testimonials = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {siteConfig.testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Card
+              key={index}
+              className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            >
               <CardContent className="p-8">
                 <div className="flex items-center mb-6">
                   <Quote className="w-8 h-8 text-blue-600 mr-3" />
@@ -34,10 +37,15 @@ export const Testimonials = () => {
 
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
-                    {testimonial.name.split(' ').map(n => n[0]).join('')}
+                    {testimonial.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="font-semibold text-gray-900">
+                      {testimonial.name}
+                    </div>
                     <div className="text-gray-600">{testimonial.title}</div>
                   </div>
                 </div>

@@ -6,13 +6,13 @@ const createJestConfig = nextJest({
 });
 
 const config: Config = {
-  displayName: '@shekara-dev/ArtiEaz',
-  preset: '../../jest.preset.js',
+  displayName: '@shekara-dev/koko-koobi-web',
+  preset: '../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/apps/ArtiEaz',
+  coverageDirectory: '../coverage/koko-koobi-web',
   testEnvironment: 'jsdom',
 };
 

@@ -211,7 +211,7 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@20.19.13)(@vitest/ui@3.2.4)(jiti@2.4.2)(jsdom@22.1.0)(less@4.1.3)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(terser@5.44.0)(yaml@2.8.1)
 
-  apps/ArtiEaz:
+  apps/koko-koobi-web:
     dependencies:
       next:
         specifier: ~15.2.4
@@ -223,7 +223,7 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
 
-  apps/ArtiEaz-e2e: {}
+  apps/koko-koobi-web-e2e: {}
 
   libs/ui: {}
 

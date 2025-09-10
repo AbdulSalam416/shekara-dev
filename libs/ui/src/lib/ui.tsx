@@ -3,5 +3,4 @@ export function ShekaraDevUi() {
       <h1 className={'text-gray-800'}>Welcome to ShekaraDevUi!</h1>
   );
 }
-
 export default ShekaraDevUi;

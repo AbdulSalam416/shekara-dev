@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,17 +17,14 @@
       }
     ],
     //
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["jest", "node"],
     "skipLibCheck": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "isolatedModules": true
   },
   "include": [
-    "../../apps/ArtiEaz/.next/types/**/*.ts",
-    "../../dist/apps/ArtiEaz/.next/types/**/*.ts",
+    "../apps/koko-koobi-web/.next/types/**/*.ts",
+    "../dist/apps/koko-koobi-web/.next/types/**/*.ts",
     "next-env.d.ts",
     "src/**/*.js",
     "src/**/*.jsx",

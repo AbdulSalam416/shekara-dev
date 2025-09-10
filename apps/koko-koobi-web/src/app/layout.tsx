@@ -1,8 +1,8 @@
 import './global.css';
-import '../../../../libs/ui/src/styles/global.css'
+import '../../../../libs/ui/src/styles/global.css';
 export const metadata = {
-  title: 'Welcome to ArtiEaz',
-  description: 'An all in one platform for your workflow',
+  title: 'Welcome to Koko & Koobi',
+  description: 'Your number one source for hyper-local market insights',
 };
 
 export default function RootLayout({

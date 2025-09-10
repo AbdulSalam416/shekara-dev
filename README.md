@@ -17,23 +17,23 @@ pnpm install
 ### Run the development server
 
 ```sh
-npx nx dev ArtiEaz
+npx nx dev koko-koobi-web
 ```
 
 ### Build for production
 
 ```sh
-npx nx build ArtiEaz
+npx nx build koko-koobi-web
 ```
 
 ### Run unit tests
 
 ```sh
-npx nx test ArtiEaz
+npx nx test koko-koobi-web
 ```
 
 ### Run end-to-end (e2e) tests
 
 ```sh
-npx nx e2e ArtiEaz-e2e
+npx nx e2e koko-koobi-web-e2e
 ```

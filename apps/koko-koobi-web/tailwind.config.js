@@ -22,7 +22,6 @@
 //   plugins: [],
 // };
 
-
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join, dirname } = require('path');
 const taildwindBaseConfig = require('../../tailwind.config');

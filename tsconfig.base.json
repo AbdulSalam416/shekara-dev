@@ -18,7 +18,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@shekara-dev/ui": ["libs/ui/src/index.ts"],
+      "@shekara-dev/ui": ["libs/ui/src/index.ts"]
     }
   }
 }

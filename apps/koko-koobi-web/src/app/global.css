@@ -1,0 +1,41 @@
+:root {
+  /* Primary Colors */
+  --primary-default: #1D4AF37; /* ; Primary clear #161a27; */
+  --primary-secondary: #2e8b57; /* Primary dull with low saturation */
+  --primary-tertiary: #3a3a3a; /* Primary dull with high saturation */
+  --primary-contrast: #faebd7; /* Primary contrast */
+
+  /* Accent Colors */
+  --accent-default: #c70039; /* Example: #094372;  bright accent color */
+  --accent-secondary: #9810fa; /* Example: dull accent with low saturation */
+  --accent-tertiary: #4a5565; /* Example: dull accent with high saturation */
+  --accent-contrast: #ffffff; /* Example: accent contrast color */
+
+  --light-default: #c2dcef; /* light clear */
+  --light-secondary: #d1f9e8; /* light dull with low saturation */
+  --light-tertiary: #23bc4b; /* light dull with high saturation */
+  --light-contrast: #095ea6; /* light contrast */
+
+  /* Surface Colors */
+  --surface-default: #ffffff; /* Example: primary surface color */
+  --surface-secondary: #f4f2f1; /* Example:#efefef #f7f5f2; #e5e5e5; secondary surface color #f4f0ea */
+  --surface-tertiary: #e2e6e6; /* #e2e6e6 Example: tertiary surface color */
+
+  /* Content Colors */
+  --content-default: #333333; /* Example: primary text color */
+  --content-secondary: #f5f5f5; /* #666666 Example: secondary text color */
+  --content-tertiary: #999999; /* Example: tertiary text color */
+
+  /* Border Colors */
+  --solid-100: #e0e0e0; /* Example: light Border color */
+  --solid-200: #c0c0c0; /* Example: slightly darker solid */
+  --solid-300: #a0a0a0; /* Example: medium solid color */
+  --solid-400: #808080; /* Example: dark solid color */
+  --solid-500: #606060; /* Example: very dark border color */
+}
+
+@tailwind base;
+@tailwind utilities;
+
+body {
+}
