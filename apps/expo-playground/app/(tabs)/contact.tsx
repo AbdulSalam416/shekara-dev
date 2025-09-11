@@ -1,14 +1,15 @@
-import {StyleSheet, Text, View, Image } from 'react-native';
-import { Link } from 'expo-router';
+import {StyleSheet, Text, View } from 'react-native';
+import {Link} from 'expo-router'
 
-export default function HomeScreen() {
+export default function AboutScreen() {
   return (
     <View style={styles.container} >
-      <Text style={styles.title}>The Number 1</Text>
+      <Text style={styles.title}>Contact Us</Text>
       <Text style={{
         marginTop:10, marginBottom:30
-      }}>Reading List App</Text>
-      <Link href={'/about'}>About Page</Link>
+      }}>Contact Page details</Text>
+
+      <Link href={'/contacto'} >Back home</Link>
     </View>
   );
 }
