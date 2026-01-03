@@ -1,8 +1,8 @@
 import './global.css';
 import '../../../../libs/ui/src/styles/global.css';
 export const metadata = {
-  title: 'Welcome to Koko & Koobi',
-  description: 'Your number one source for hyper-local market insights',
+  title: 'Welcome to ..',
+  description: '.....',
 };
 
 export default function RootLayout({

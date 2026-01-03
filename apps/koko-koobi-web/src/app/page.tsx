@@ -7,11 +7,7 @@ import { Hero } from '../components/core/Hero';
 export default function Index() {
   return (
     <div>
-      <NavBar />
-      <Hero />
-      <ToolsSection />
-      <Cta />
-      <Footer />
+
     </div>
   );
 }
