@@ -4,11 +4,11 @@ This document outlines the next steps to get the Koko & Koobi project to a Minim
 
 ## 1. Foundational Setup & Design System
 
-- [x] Rename project from `ArtiEaz` to `koko-koobi-web`.
+- [x] Rename project from `ArtiEaz` to `llm-knowledge-graph`.
 - [x] Update all documentation and configuration to reflect the new project identity.
 - [ ] **Finalize Design System:**
     - [ ] Review and refine all components in the `@app-ui` library for consistency and completeness.
-    - [ ] Ensure `koko-koobi-web` is fully integrated with the `@app-ui` design system.
+    - [ ] Ensure `llm-knowledge-graph` is fully integrated with the `@app-ui` design system.
 - [ ] **Fix ShadCn Utils:**
     - [ ] Investigate and resolve any remaining configuration issues with `ShadCn` utility functions.
 
@@ -29,4 +29,4 @@ This document outlines the next steps to get the Koko & Koobi project to a Minim
 - [ ] **Backend & Database:**
     - [ ] Plan and set up a backend service and database to manage real price data.
 - [ ] **Deployment:**
-    - [ ] Configure a CI/CD pipeline to deploy the `koko-koobi-web` application.
+    - [ ] Configure a CI/CD pipeline to deploy the `llm-knowledge-graph` application.

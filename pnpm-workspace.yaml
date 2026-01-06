@@ -2,5 +2,5 @@ packages:
   - 'apps/*'
   - 'generalUi'
   - 'libs/*'
-  - 'koko-koobi-web'
-  - 'koko-koobi-web-e2e'
+  - 'apps/llm-knowledge-graph'
+  - 'apps/llm-knowledge-graph-e2e'

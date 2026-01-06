@@ -23,8 +23,8 @@
     "isolatedModules": true
   },
   "include": [
-    "../apps/koko-koobi-web/.next/types/**/*.ts",
-    "../dist/apps/koko-koobi-web/.next/types/**/*.ts",
+    "../apps/llm-knowledge-graph/.next/types/**/*.ts",
+    "../dist/apps/llm-knowledge-graph/.next/types/**/*.ts",
     "next-env.d.ts",
     "src/**/*.js",
     "src/**/*.jsx",

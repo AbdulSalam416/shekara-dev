@@ -1,10 +1,10 @@
 {
-  "name": "@shekara-dev/koko-koobi-web-e2e",
+  "name": "@shekara-dev/llm-knowledge-graph-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
     "implicitDependencies": [
-      "@shekara-dev/koko-koobi-web"
+      "@shekara-dev/llm-knowledge-graph"
     ]
   }
 }

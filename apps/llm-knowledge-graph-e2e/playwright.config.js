@@ -24,7 +24,7 @@ module.exports = defineConfig({
   },
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm exec nx run @shekara-dev/koko-koobi-web:start',
+    command: 'pnpm exec nx run @shekara-dev/llm-knowledge-graph:start',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
     cwd: workspaceRoot,

@@ -1,5 +1,5 @@
 export const siteConfig = {
-  siteName: 'Koko & Koobi',
+  siteName: 'LLM Knowledge Graph',
   nav: [
     { label: 'Features', href: '#features' },
     { label: 'Pricing', href: '/' },
@@ -8,7 +8,7 @@ export const siteConfig = {
     title_l1: 'Never Overpay at the',
     title_l2: 'Market Again.',
     subtitle:
-      'Koko & Koobi brings you hyper-local market insights on daily commodity prices, trends, and forecasts. From farmers to traders to households, everyone deserves price transparency.',
+      'LLM Knowledge Graph brings you hyper-local market insights on daily commodity prices, trends, and forecasts. From farmers to traders to households, everyone deserves price transparency.',
     ctaText: 'Download the App',
     ctaLink: '/get-started',
     bgImage: '/hero_bg',
@@ -56,7 +56,7 @@ export const siteConfig = {
   testimonials: [
     {
       quote:
-        'With Koko & Koobi, I know the price of maize before I even step into the market. No more surprises!',
+        'With LLM Knowledge Graph, I know the price of maize before I even step into the market. No more surprises!',
       name: 'Abdul Rahman',
       title: 'Farmer, Tamale',
       img: '/testimony_1.png',
@@ -81,7 +81,7 @@ export const siteConfig = {
   cta: {
     title: 'Ready to Save Money?',
     subtitle:
-      "Join thousands of Ghanaians making smarter decisions. Download Koko & Koobi today, it's free!",
+      "Join thousands of Ghanaians making smarter decisions. Download LLM Knowledge Graph today, it's free!",
     ctaText: 'Download For Free',
     ctaLink: '/get-started',
   },
@@ -97,6 +97,6 @@ export const siteConfig = {
       { label: 'Terms of Service', href: '/terms' },
       { label: 'Privacy Policy', href: '/privacy' },
     ],
-    copyright: '© 2025 Koko & Koobi. All rights reserved.',
+    copyright: '© 2025 LLM Knowledge Graph. All rights reserved.',
   },
 };

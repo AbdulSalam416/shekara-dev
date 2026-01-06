@@ -5,13 +5,13 @@ const createJestConfig = nextJest({
 });
 
 const config = {
-  displayName: '@shekara-dev/koko-koobi-web',
+  displayName: '@shekara-dev/llm-knowledge-graph',
   preset: '../jest.preset.js',
   transform: {
     '^(?!.*\\.\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../coverage/koko-koobi-web',
+  coverageDirectory: '../coverage/llm-knowledge-graph',
   testEnvironment: 'jsdom',
 };
 

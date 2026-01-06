@@ -17,23 +17,23 @@ pnpm install
 ### Run the development server
 
 ```sh
-npx nx dev koko-koobi-web
+npx nx dev llm-knowledge-graph
 ```
 
 ### Build for production
 
 ```sh
-npx nx build koko-koobi-web
+npx nx build llm-knowledge-graph
 ```
 
 ### Run unit tests
 
 ```sh
-npx nx test koko-koobi-web
+npx nx test llm-knowledge-graph
 ```
 
 ### Run end-to-end (e2e) tests
 
 ```sh
-npx nx e2e koko-koobi-web-e2e
+npx nx e2e llm-knowledge-graph-e2e
 ```

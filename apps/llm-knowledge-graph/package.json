@@ -1,5 +1,5 @@
 {
-  "name": "@shekara-dev/koko-koobi-web",
+  "name": "@shekara-dev/llm-knowledge-graph",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
