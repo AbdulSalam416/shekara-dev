@@ -5,3 +5,4 @@ export * from './components/ui/badge';
 export * from './components/ui/iconLabel';
 export * from './lib/icon-registry'
 export * from './components/ui/dynamicIcon'
+export * from './components/ui/sidebar'
