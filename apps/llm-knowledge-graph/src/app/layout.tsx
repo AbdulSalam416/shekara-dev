@@ -5,6 +5,8 @@ export const metadata = {
   description: '.....',
 };
 
+import {Sidebar, SidebarProvider } from '@shekara-dev/ui'
+import { MindGraphSidebar } from '../components/core/AppSidebar';
 export default function RootLayout({
   children,
 }: {
@@ -12,7 +14,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+
+      <body> <MindGraphSidebar/></body>
     </html>
   );
 }

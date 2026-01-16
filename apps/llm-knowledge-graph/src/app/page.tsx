@@ -5,7 +5,6 @@ export default function Index() {
   return (
     <div>
       <h1>Welcome to LLM Knowledge Graph!</h1>
-      <Button>Hyy</Button>
     </div>
   );
 }
