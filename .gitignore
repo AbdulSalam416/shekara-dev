@@ -70,3 +70,6 @@ npm-debug.*
 web-build/
 cache/
 
+# Environment variables
+.env.local
+.env

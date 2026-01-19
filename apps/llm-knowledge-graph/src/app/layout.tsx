@@ -1,11 +1,10 @@
 import './global.css';
 import '../../../../libs/ui/src/styles/global.css';
 export const metadata = {
-  title: 'Welcome to ..',
+  title: 'LLM Knowledge Graph',
   description: '.....',
 };
 
-import {Sidebar, SidebarProvider } from '@shekara-dev/ui'
 import { MindGraphSidebar } from '../components/core/AppSidebar';
 export default function RootLayout({
   children,
@@ -14,7 +13,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-
       <body> <MindGraphSidebar/></body>
     </html>
   );

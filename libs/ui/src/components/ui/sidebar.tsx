@@ -3,19 +3,19 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 
-import { useIsMobile } from "libs/ui/src/hooks/use-mobile"
-import { cn } from "libs/ui/src/components/utils"
-import { Button } from "libs/ui/src/components/ui/button"
-import { Input } from "libs/ui/src/components/ui/input"
-import { Separator } from "libs/ui/src/components/ui/separator"
-import { TooltipProvider, TooltipTrigger, TooltipContent, Tooltip } from "libs/ui/src/components/ui/tooltip"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "libs/ui/src/components/ui/sheet"
-import { Skeleton } from "libs/ui/src/components/ui/skeleton"
+import { useIsMobile } from "../../hooks/use-mobile"
+import { cn } from "../utils"
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+import { Separator } from "../ui/separator"
+import { TooltipProvider, TooltipTrigger, TooltipContent, Tooltip } from "../ui/tooltip"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet"
+import { Skeleton } from "../ui/skeleton"
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "16rem"
+const SIDEBAR_WIDTH = "24rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
@@ -267,7 +267,7 @@ const SidebarTrigger = React.forwardRef<
     <Button
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost"
+      variant="default"
       size="icon"
       className={cn("h-7 w-7", className)}
       onClick={(event) => {
@@ -276,7 +276,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <ChevronLeft />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
