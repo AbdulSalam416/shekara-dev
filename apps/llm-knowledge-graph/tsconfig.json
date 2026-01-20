@@ -11,6 +11,10 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
+//    "paths": {
+//      "@lib/*":["src/lib/*"],
+//      "@components/*":["src/components/*"]
+//    },
     "plugins": [
       {
         "name": "next"
