@@ -1,21 +1,17 @@
-interface Node {
-  id: string;
-  type: string;
-  label: string;
-  properties: Record<string, any>;
-}
 
-interface Relationship {
-  source: string;
-  target: string;
-  type: string;
-  properties: Record<string, any>;
-}
+import {  Node, Relationship } from '@langchain/community/graphs/document';
 
-interface ResearchGap {
+export interface ResearchGap {
   id: string;
   concepts: string[];
   description: string;
   evidence: string[];
   potentialImpact: 'high' | 'medium' | 'low';
 }
+
+export interface GraphData {
+  nodes: Node[];
+  relationships: Relationship[];
+  metadata?: Record<string, any>;
+}
+
