@@ -69,6 +69,7 @@ class ResearchGraphExtractor {
         },
       });
 
+      console.log(document);
       // Extract graph
       const graphDocuments =
         await this.graphTransformer.convertToGraphDocuments([document]);
