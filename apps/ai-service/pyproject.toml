@@ -26,6 +26,7 @@ dependencies = [
     "langchain>=0.3.27",
     "langchain-community>=0.3.31",
     "langchain-core>=1.2.7",
+    "langchain-experimental>=0.4.1",
     "langchain-google-genai>=2.1.12",
     "llmgraphtransformer>=0.0.2",
     "uvicorn>=0.39.0",

@@ -1,171 +1,230 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 import json
+import re
+import asyncio
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.documents import Document
-from LLMGraphTransformer import LLMGraphTransformer
-from langchain_community.graphs.graph_document import (
-  GraphDocument,
-  Node,
-  Relationship,
-)
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+from pydantic import BaseModel, Field
 
 import os
 
 
-class GraphData(Dict):
-  nodes: List[Node]
-  relationships: List[Relationship]
-  metadata: Dict[str, Any]
+class NodeSchema(BaseModel):
+  id: str = Field(description="Unique identifier for the node")
+  type: str = Field(description="Type/category of the node")
+  label: str = Field(description="Display name for the node")
+  properties: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RelationshipSchema(BaseModel):
+  source: str = Field(description="Source node ID")
+  target: str = Field(description="Target node ID")
+  type: str = Field(description="Relationship type")
+  properties: Dict[str, Any] = Field(default_factory=dict)
+
+
+class GraphSchema(BaseModel):
+  nodes: List[NodeSchema] = Field(default_factory=list)
+  relationships: List[RelationshipSchema] = Field(default_factory=list)
+
+
+from ..prompts.knowledge_graph_extraction import KNOWLEDGE_GRAPH_EXTRACTION_PROMPT
+
+
+def create_prompt_template() -> ChatPromptTemplate:
+  """the prompt template for knowledge graph extraction."""
+  return ChatPromptTemplate.from_template(KNOWLEDGE_GRAPH_EXTRACTION_PROMPT)
 
 
 class ResearchGraphExtractor:
-  def __init__(self):
-    print("🔧 Initializing ResearchGraphExtractor...")
-
+  def __init__(self, llm_model: str = "gemini-flash-latest"):
+    print(f"🔧 Initializing ResearchGraphExtractor with model {llm_model}...")
     self.llm = ChatGoogleGenerativeAI(
-      model="gemini-flash-latest",
+      model=llm_model,
       google_api_key=os.getenv("GEMINI_API_KEY"),
       temperature=0,
-      max_output_tokens=2048,
+      max_output_tokens=8192,
     )
-    print("✅ LLM initialized")
+    self.parser = JsonOutputParser(pydantic_object=GraphSchema)
+    self.prompt = create_prompt_template()
+    self.chain = self.prompt | self.llm | self.parser
 
-    self.graph_transformer = LLMGraphTransformer(
-      llm=self.llm,
-    )
-    print("✅ Graph transformer initialized")
+    print("✅ Custom extractor initialized")
 
-  # -------------------------
-  # Single paper extraction
-  # -------------------------
-  def extract_from_paper(
-    self, paper_text: str, metadata: Dict[str, Any] | None = None
-  ) -> GraphData:
+  async def extract_from_paper(
+    self,
+    paper_text: str,
+    metadata: Optional[Dict[str, Any]] = None
+  ) -> Dict[str, Any]:
+    """Extract knowledge graph from a single paper."""
+
     print("\n" + "=" * 60)
-    print("📄 EXTRACTING FROM PAPER")
+    print("📄 EXTRACTING FROM PAPER (CUSTOM)")
     print("=" * 60)
 
     metadata = metadata or {}
-    print(f"📊 Input metadata: {metadata}")
-    print(f"📝 Paper text length: {len(paper_text)} characters")
 
-    document = Document(
-      page_content=paper_text,
-      metadata={
+    print(f"📝 Processing {len(paper_text)} characters")
+    print("\n🤖 Extracting knowledge graph...")
+
+    try:
+      result = await self.chain.ainvoke({
+        "text": paper_text,
+        "format_instructions": self.parser.get_format_instructions()
+      })
+
+      print(f"✅ Extraction complete")
+      print(f"📊 Nodes: {len(result.get('nodes', []))}")
+      print(f"📊 Relationships: {len(result.get('relationships', []))}")
+
+      # Add metadata
+      result['metadata'] = {
         **metadata,
         "extracted_at": datetime.utcnow().isoformat(),
-      },
-    )
-    print(f"✅ Document created with metadata: {document.metadata}")
+        "paper_length": len(paper_text),
+        # "truncated": len(paper_text) == max_chars
+      }
 
-    print("\n🤖 Calling LLM Graph Transformer...")
-    try:
-      graph_documents = (
-        self.graph_transformer.convert_to_graph_documents([document])
-      )
-      print(f"✅ Graph transformation complete")
-      print(f"📊 Number of graph documents returned: {len(graph_documents)}")
+      # Show samples
+      if result.get('nodes'):
+        print(f"\n  Sample Nodes:")
+        for node in result['nodes'][:3]:  # 👈 Show fewer in logs
+          print(f"    - [{node['type']}] {node.get('label', node['id'])}")
+
+      if result.get('relationships'):
+        print(f"\n  Sample Relationships:")
+        for rel in result['relationships'][:3]:
+          print(f"    - {rel['source']} --[{rel['type']}]--> {rel['target']}")
+
+      return result
+
     except Exception as e:
-      print(f"❌ ERROR during graph transformation: {type(e).__name__}")
-      print(f"❌ Error message: {str(e)}")
+      print(f"❌ ERROR: {type(e).__name__}: {str(e)}")
       import traceback
       traceback.print_exc()
-      raise
 
-    if not graph_documents:
-      print("⚠️  No graph documents returned, returning empty graph")
-      return {"nodes": [], "relationships": [], "metadata": {}}
+      # Return empty graph with error info
+      return {
+        "nodes": [],
+        "relationships": [],
+        "metadata": {
+          **metadata,
+          "error": str(e),
+          "extracted_at": datetime.utcnow().isoformat()
+        }
+      }
 
-    graph_doc = graph_documents[0]
-    print(f"\n📊 Graph Document Analysis:")
-    print(f"  - Nodes: {len(graph_doc.nodes)}")
-    print(f"  - Relationships: {len(graph_doc.relationships)}")
+  # 👇 NEW: Extract from multiple papers and merge
+  async def extract_from_multiple_papers(
+    self,
+    papers: List[Dict[str, str]]  # [{"text": "...", "id": "paper1"}, ...]
+  ) -> Dict[str, Any]:
+    """Extract from multiple papers and merge into single graph."""
 
-    # Print node details
-    print(f"\n🔵 Nodes:")
-    for i, node in enumerate(graph_doc.nodes, 1):
-      print(f"  {i}. {node.id} (type: {node.type})")
-      print(f"     Properties: {node.properties}")
+    print(f"\n🔄 Extracting from {len(papers)} papers...")
 
-    # Print relationship details
-    print(f"\n🔗 Relationships:")
-    for i, rel in enumerate(graph_doc.relationships, 1):
-      print(f"  {i}. {rel.source.id} --[{rel.type}]--> {rel.target.id}")
-      print(f"     Properties: {rel.properties}")
+    # Extract in parallel
+    tasks = [
+      self.extract_from_paper(
+        paper["text"],
+        {"paper_id": paper.get("id", f"paper_{i}")}
+      )
+      for i, paper in enumerate(papers)
+    ]
 
-    result = {
-      "nodes": graph_doc.nodes,
-      "relationships": graph_doc.relationships,
-      "metadata": graph_doc.source.metadata,
-    }
+    results = await asyncio.gather(*tasks)
 
-    print(f"\n📦 Returning result:")
-    print(f"  - Type: {type(result)}")
-    print(f"  - Keys: {result.keys()}")
-    print(f"  - Nodes type: {type(result['nodes'])}")
-    print(f"  - Relationships type: {type(result['relationships'])}")
+    # Merge graphs
+    merged = self._merge_graphs(results)
 
-    return result
-
-  # -------------------------
-  # Multiple paper extraction
-  # -------------------------
-  def extract_from_multiple_papers(
-    self, papers: List[Dict[str, Any]]
-  ) -> GraphData:
-    print("\n" + "=" * 60)
-    print("📚 EXTRACTING FROM MULTIPLE PAPERS")
-    print("=" * 60)
-    print(f"📊 Number of papers: {len(papers)}")
-
-    graphs = []
-    for i, p in enumerate(papers, 1):
-      print(f"\n--- Processing paper {i}/{len(papers)} ---")
-      graph = self.extract_from_paper(p["text"], p.get("metadata"))
-      graphs.append(graph)
-      print(f"✅ Paper {i} processed: {len(graph['nodes'])} nodes, {len(graph['relationships'])} relationships")
-
-    print("\n🔀 Merging graphs...")
-    merged = self.merge_graphs(graphs)
-    print(f"✅ Merge complete: {len(merged['nodes'])} total nodes, {len(merged['relationships'])} total relationships")
+    print(f"\n✅ Merged graph:")
+    print(f"   - Total nodes: {len(merged['nodes'])}")
+    print(f"   - Total relationships: {len(merged['relationships'])}")
 
     return merged
 
-  # -------------------------
-  # Graph merging
-  # -------------------------
-  def merge_graphs(self, graphs: List[GraphData]) -> GraphData:
-    print(f"\n🔀 Merging {len(graphs)} graphs...")
+  def _merge_graphs(self, graphs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Merge multiple graphs into one, deduplicating nodes."""
 
-    merged_nodes: Dict[str, Node] = {}
-    merged_relationships: List[Relationship] = []
+    node_map = {}  # id -> node
+    relationship_set = set()  # (source, type, target)
+    merged_relationships = []
 
-    for i, graph in enumerate(graphs, 1):
-      print(f"  Processing graph {i}: {len(graph['nodes'])} nodes, {len(graph['relationships'])} relationships")
+    for graph in graphs:
+      # Merge nodes
+      for node in graph.get('nodes', []):
+        node_id = node['id']
 
-      for node in graph["nodes"]:
-        if node.id not in merged_nodes:
-          merged_nodes[node.id] = node
-          print(f"    ➕ Added new node: {node.id}")
+        if node_id not in node_map:
+          # First time seeing this node
+          node_map[node_id] = dict(node)
+          node_map[node_id]['properties']['frequency'] = 1
         else:
-          existing = merged_nodes[node.id]
-          existing.properties.update(node.properties)
-          print(f"    🔄 Updated existing node: {node.id}")
+          # Node seen before - increment frequency
+          node_map[node_id]['properties']['frequency'] += 1
 
-      merged_relationships.extend(graph["relationships"])
+          # Upgrade importance if any instance is high
+          if node.get('properties', {}).get('importance') == 'high':
+            node_map[node_id]['properties']['importance'] = 'high'
 
-    result = {
-      "nodes": list(merged_nodes.values()),
-      "relationships": merged_relationships,
-      "metadata": {},
+      # Merge relationships (deduplicate)
+      for rel in graph.get('relationships', []):
+        rel_key = (rel['source'], rel['type'], rel['target'])
+
+        if rel_key not in relationship_set:
+          relationship_set.add(rel_key)
+          merged_relationships.append(rel)
+
+    return {
+      'nodes': list(node_map.values()),
+      'relationships': merged_relationships,
+      'metadata': {
+        'num_papers': len(graphs),
+        'merged_at': datetime.utcnow().isoformat()
+      }
     }
 
-    print(f"✅ Merge result: {len(result['nodes'])} unique nodes, {len(result['relationships'])} relationships")
-    return result
+  # 👇 NEW: Validation helper
+  def validate_graph(self, graph: Dict[str, Any]) -> bool:
+    """Validate graph structure and node references."""
+
+    try:
+      # Check all relationship nodes exist
+      node_ids = {node['id'] for node in graph.get('nodes', [])}
+
+      for rel in graph.get('relationships', []):
+        if rel['source'] not in node_ids:
+          print(f"⚠️  Warning: Relationship references unknown source: {rel['source']}")
+          return False
+        if rel['target'] not in node_ids:
+          print(f"⚠️  Warning: Relationship references unknown target: {rel['target']}")
+          return False
+
+      return True
+
+    except Exception as e:
+      print(f"❌ Validation error: {e}")
+      return False
 
 
-print("🚀 Creating extractor instance...")
-extractor = ResearchGraphExtractor()
-print("✅ Extractor ready!\n")
+# 👇 IMPORTANT: Only create instance when imported, not at module level
+def get_extractor() -> ResearchGraphExtractor:
+  """Factory function to get extractor instance."""
+  return ResearchGraphExtractor()
+
+
+# For backward compatibility
+extractor = None
+
+
+def init_extractor():
+  """Initialize the global extractor instance."""
+  global extractor
+  if extractor is None:
+    print("🚀 Creating custom extractor instance...")
+    extractor = ResearchGraphExtractor()
+    print("✅ Extractor ready!\n")
+  return extractor
