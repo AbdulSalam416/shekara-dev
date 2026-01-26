@@ -82,7 +82,7 @@ export default function MindGraphSidebarContent() {
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarTrigger className="ml-1" />
+      <SidebarTrigger className="ml-1 z-10" />
     </>
   )
 }
