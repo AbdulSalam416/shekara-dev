@@ -5,7 +5,6 @@ export const metadata = {
   description: '.....',
 };
 
-import { MindGraphSidebar } from '../components/core/AppSidebar';
 export default function RootLayout({
   children,
 }: {

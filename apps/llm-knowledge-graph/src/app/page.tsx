@@ -7,9 +7,9 @@ export default function Index() {
 
 
   return (
-    <div>
+    <div className={'flex flex-col items-center justify-center'}>
       <h1>Welcome to LLM Knowledge Graph!</h1>
-      <Link href={`/${endpoints.analyze}`} className={'text-blue-300'}> Analyse</Link>
+      <Link href={`/${endpoints.research}`} className={'text-blue-300'}> Mindgraph Research </Link>
     </div>
   );
 }

@@ -1,3 +1,3 @@
 export const endpoints ={
-  analyze:'analyse'
+  research:'research',
 }
