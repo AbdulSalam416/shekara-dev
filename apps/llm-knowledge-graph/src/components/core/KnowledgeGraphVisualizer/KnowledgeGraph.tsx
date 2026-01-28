@@ -33,7 +33,10 @@ const {open} = useSidebar()
     { label: 'Concept', color: '#60a5fa' },
     { label: 'Method', color: '#84cc16' },
     { label: 'Dataset', color: '#a78bfa' },
-    { label: 'Finding', color: '#fbbf24' }
+    { label: 'Finding', color: '#fbbf24' },
+    { label: 'Metric', color: '#ef4444' },
+    { label: 'ResearchGap', color: '#ec4899' },
+    { label: 'Technology', color: '#84cc16' },
   ];
 
   // Transform data for react-force-graph
@@ -120,7 +123,7 @@ const {open} = useSidebar()
   };
 
   return (
-    <div className="relative w-fit h-screen  bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="relative  bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
         <div className="relative">
           <input
@@ -160,7 +163,7 @@ const {open} = useSidebar()
 
 
       {/* Legend */}
-      <div className="absolute top-8 left-8 z-10 bg-white rounded-lg shadow-md border border-gray-200 p-4">
+      <div className="absolute bottom-8 left-8 z-10 bg-white rounded-lg shadow-md border border-gray-200 p-4">
         <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
           Legend
         </div>
@@ -169,7 +172,13 @@ const {open} = useSidebar()
             <div
               key={item.label}
               className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded transition-colors"
-              onClick={() => setSelectedType(selectedType === item.label ? null : item.label)}
+              onClick={() => {
+                if (graphRef.current) {
+                  const currentZoom = graphRef.current.zoom();
+                  graphRef.current.zoom(currentZoom * 1.2, 300);
+                }
+                setSelectedType(selectedType === item.label ? null : item.label)}
+            }
             >
               <div className="relative">
                 <div
@@ -194,12 +203,12 @@ const {open} = useSidebar()
       <ForceGraph2D
         ref={graphRef}
         graphData={filteredData}
-        width={ open ? 700: 1000}
-        height={window.innerHeight}
+        width={ open ?  window.innerWidth - 384 : window.innerWidth }
+        height={920}
         backgroundColor="#f9fafb"
         nodeRelSize={6}
         nodeVal={node => highlightNodes.has(node.id) ? 15 : 10}
-        linkDirectionalArrowLength={6}
+        linkDirectionalArrowLength={3}
         linkDirectionalArrowRelPos={1}
         linkWidth={link => {
           const sourceHighlight = highlightNodes.has(link.source);
@@ -268,7 +277,7 @@ const {open} = useSidebar()
         nodePointerAreaPaint={(node, color, ctx) => {
           ctx.fillStyle = color;
           const bckgDimensions = node.__bckgDimensions;
-          const labelY = node.y + 15;
+          const labelY = node.y + 12;
           if (bckgDimensions) {
             ctx.fillRect(
               node.x - bckgDimensions[0] / 2,

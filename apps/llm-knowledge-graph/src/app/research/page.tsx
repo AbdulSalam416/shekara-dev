@@ -12,12 +12,10 @@ export default async function Index() {
   return (
 
     <MindGraphResearchLayout>
-      <div className="flex">
-        <div className="flex-1 ">
           <KnowledgeGraphVisualizer />
-        </div>
-        <div className={'flex-1'}><GapAnalysis /></div>
-      </div>
+
+        {/*<div className={'flex-1'}><GapAnalysis /></div>*/}
+
     </MindGraphResearchLayout>
   );
 }

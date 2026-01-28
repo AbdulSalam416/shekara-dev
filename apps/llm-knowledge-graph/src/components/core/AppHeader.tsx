@@ -9,7 +9,7 @@ export function AppHeader() {
   const isSidebarCollapsed = state === "collapsed";
 
   return (
-    <header className="flex justify-between h-16 shrink-0 items-center gap-2 border-b p-4" >
+    <header className="flex sticky justify-between h-16 shrink-0 items-center gap-2 border-b p-4" >
    <div className="flex items-center gap-2" >
      <SidebarTrigger className="-ml-1" />
      <div className="flex items-center gap-2">
