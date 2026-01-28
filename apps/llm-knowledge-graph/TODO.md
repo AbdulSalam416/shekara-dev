@@ -18,9 +18,9 @@
   ```bash
   npm install langchain @langchain/google-genai
   npm install d3 @types/d3
-  npm install react-force-graph-2d  # For quick MVP graph
+  npm install react-force-graph-2d 
   npm install lucide-react
-  npm install pdf-parse  # For PDF text extraction
+  npm install pdf-parse 
   ```
 - [ ] Set up environment variables
   ```bash

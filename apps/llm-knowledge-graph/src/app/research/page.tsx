@@ -1,7 +1,8 @@
 import  fs from 'fs/promises';
 import  path from 'path';
 import KnowledgeGraphVisualizer from '../../components/core/KnowledgeGraphVisualizer/KnowledgeGraph';
-import MindGraphSidebarContent from '../../components/core/AppSidebar/MindGraphSidebarContent';
+import GapAnalysis from '../../components/GapAnalysis';
+import MindGraphResearchLayout from '../../components/core/MindGraphResearch';
 
 export default async function Index() {
   const pdfPath = path.join(process.cwd(), 'specs/dummy.pdf');
@@ -9,8 +10,14 @@ export default async function Index() {
 
 
   return (
-    <MindGraphSidebarContent>
-        <KnowledgeGraphVisualizer  />
-    </MindGraphSidebarContent>
+
+    <MindGraphResearchLayout>
+      <div className="flex">
+        <div className="flex-1 ">
+          <KnowledgeGraphVisualizer />
+        </div>
+        <div className={'flex-1'}><GapAnalysis /></div>
+      </div>
+    </MindGraphResearchLayout>
   );
 }
