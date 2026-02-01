@@ -1,202 +1,192 @@
 export const defaultGraphData ={
   "nodes": [
     {
-      "id": "climate_crisis",
+      "id": "acculturation_theory",
       "type": "Concept",
-      "label": "Climate Crisis"
+      "label": "Acculturation Theory"
     },
     {
-      "id": "open_source_software",
+      "id": "islamic_influence",
       "type": "Concept",
-      "label": "Open Source Software"
+      "label": "Islamic Influence"
     },
     {
-      "id": "opensustain_tech",
+      "id": "dagomba_culture",
+      "type": "Concept",
+      "label": "Dagomba Culture"
+    },
+    {
+      "id": "traditional_dagomba_religion",
+      "type": "Concept",
+      "label": "Traditional Dagomba Religion"
+    },
+    {
+      "id": "dagomba_rites_of_passage",
+      "type": "Concept",
+      "label": "Dagomba Rites of Passage"
+    },
+    {
+      "id": "afa_muslim_cleric",
+      "type": "Concept",
+      "label": "Afa (Muslim Cleric)"
+    },
+    {
+      "id": "participant_observation",
+      "type": "Method",
+      "label": "Participant Observation"
+    },
+    {
+      "id": "interviews_with_elders",
+      "type": "Method",
+      "label": "Interviews with Dagomba Elders"
+    },
+    {
+      "id": "na_zangina_conversion",
+      "type": "Finding",
+      "label": "Conversion of King Na Zangina to Islam"
+    },
+    {
+      "id": "islam_dominates_culture",
+      "type": "Finding",
+      "label": "Islam Dominates Indigenous Dagomba Culture"
+    },
+    {
+      "id": "afa_central_to_rites",
+      "type": "Finding",
+      "label": "Afa is Central to All Rites of Passage"
+    },
+    {
+      "id": "damba_festival",
+      "type": "Concept",
+      "label": "Damba Festival"
+    },
+    {
+      "id": "bugum_fire_festival",
+      "type": "Concept",
+      "label": "Bugum (Fire Festival)"
+    },
+    {
+      "id": "islamo_dagomba_culture_gap",
+      "type": "ResearchGap",
+      "label": "Distinction between Synthesis and New Culture (Islamo-Dagomba Culture)"
+    },
+    {
+      "id": "security_role_of_afa",
+      "type": "Finding",
+      "label": "Afa Provides Security and Divinatory Control for Dagbon State"
+    },
+    {
+      "id": "dagomba_population_traditional_believers",
+      "type": "Finding",
+      "label": "Less than 10% of Dagomba Population are Traditional Believers"
+    },
+    {
+      "id": "dyula_wangara_muslims",
+      "type": "Concept",
+      "label": "Dyula (Wangara) Settler Muslims"
+    },
+    {
+      "id": "quran",
       "type": "Dataset",
-      "label": "OpenSustain.tech Catalogue"
+      "label": "Qur'an"
     },
     {
-      "id": "open_source_ecosystem",
+      "id": "sabli_largibu_divination",
       "type": "Concept",
-      "label": "Open Source Ecosystem"
+      "label": "Sabli Largibu (Divination Technique)"
     },
     {
-      "id": "science_score",
+      "id": "tindana_earth_spirit_priest",
       "type": "Concept",
-      "label": "Science Score"
-    },
-    {
-      "id": "human_curation",
-      "type": "Method",
-      "label": "Human Curation"
-    },
-    {
-      "id": "transitive_dependency_analysis",
-      "type": "Method",
-      "label": "Transitive Dependency Analysis"
-    },
-    {
-      "id": "llm_enabled_search",
-      "type": "Method",
-      "label": "LLM Enabled Search"
-    },
-    {
-      "id": "ecosyste_ms",
-      "type": "Technology",
-      "label": "ecosyste.ms Platform"
-    },
-    {
-      "id": "github",
-      "type": "Technology",
-      "label": "GitHub"
-    },
-    {
-      "id": "python",
-      "type": "Technology",
-      "label": "Python"
-    },
-    {
-      "id": "openalex",
-      "type": "Technology",
-      "label": "OpenAlex"
-    },
-    {
-      "id": "open_source_ecosystem_is_growing",
-      "type": "Finding",
-      "label": "Open Source Ecosystem is Growing"
-    },
-    {
-      "id": "discovery_saturation_point",
-      "type": "Finding",
-      "label": "Discovery of New Projects Reached Saturation"
-    },
-    {
-      "id": "fragmented_proprietary_approaches_persist",
-      "type": "ResearchGap",
-      "label": "Fragmented Proprietary Approaches Persist in Climate Tech"
-    },
-    {
-      "id": "lack_scientific_literature_open_sustainability",
-      "type": "ResearchGap",
-      "label": "Lack of Scientific Literature on Open Sustainability Landscape"
-    },
-    {
-      "id": "need_systematic_analysis_scientific_papers",
-      "type": "ResearchGap",
-      "label": "Need for Systematic Analysis of Scientific Papers for Repositories"
-    },
-    {
-      "id": "limited_time_energy_contributors",
-      "type": "ResearchGap",
-      "label": "Limited Time and Energy for Unpaid Community Contributors"
-    },
-    {
-      "id": "lack_open_projects_nuclear_power",
-      "type": "ResearchGap",
-      "label": "Lack of Open Projects in Nuclear Power Due to Security Incentives"
-    },
-    {
-      "id": "difficulty_finding_new_projects",
-      "type": "ResearchGap",
-      "label": "Difficulty Finding New Open Source Projects"
+      "label": "Tindana (Earth-Spirit Priest)"
     }
   ],
   "relationships": [
     {
-      "source": "opensustain_tech",
-      "target": "human_curation",
-      "type": "USES"
+      "source": "dagomba_culture",
+      "target": "acculturation_theory",
+      "type": "EVALUATED_WITH"
     },
     {
-      "source": "opensustain_tech",
-      "target": "transitive_dependency_analysis",
-      "type": "USES"
+      "source": "participant_observation",
+      "target": "dagomba_culture",
+      "type": "EVALUATED_WITH"
     },
     {
-      "source": "opensustain_tech",
-      "target": "github",
-      "type": "USES"
+      "source": "interviews_with_elders",
+      "target": "dagomba_culture",
+      "type": "EVALUATED_WITH"
     },
     {
-      "source": "transitive_dependency_analysis",
-      "target": "ecosyste_ms",
-      "type": "USES"
-    },
-    {
-      "source": "open_source_software",
-      "target": "climate_crisis",
-      "type": "IMPROVES"
-    },
-    {
-      "source": "open_source_ecosystem",
-      "target": "fragmented_proprietary_approaches_persist",
-      "type": "IDENTIFIES_GAP"
-    },
-    {
-      "source": "open_source_ecosystem",
-      "target": "lack_scientific_literature_open_sustainability",
-      "type": "IDENTIFIES_GAP"
-    },
-    {
-      "source": "opensustain_tech",
-      "target": "open_source_ecosystem_is_growing",
+      "source": "na_zangina_conversion",
+      "target": "islamic_influence",
       "type": "ACHIEVES"
     },
     {
-      "source": "opensustain_tech",
-      "target": "limited_time_energy_contributors",
+      "source": "islamic_influence",
+      "target": "islam_dominates_culture",
+      "type": "ACHIEVES"
+    },
+    {
+      "source": "islam_dominates_culture",
+      "target": "islamo_dagomba_culture_gap",
       "type": "IDENTIFIES_GAP"
     },
     {
-      "source": "opensustain_tech",
-      "target": "lack_open_projects_nuclear_power",
-      "type": "IDENTIFIES_GAP"
+      "source": "afa_muslim_cleric",
+      "target": "afa_central_to_rites",
+      "type": "ACHIEVES"
     },
     {
-      "source": "discovery_saturation_point",
-      "target": "difficulty_finding_new_projects",
-      "type": "IDENTIFIES_GAP"
+      "source": "afa_muslim_cleric",
+      "target": "security_role_of_afa",
+      "type": "ACHIEVES"
     },
     {
-      "source": "need_systematic_analysis_scientific_papers",
-      "target": "openalex",
+      "source": "afa_muslim_cleric",
+      "target": "quran",
       "type": "USES"
     },
     {
-      "source": "need_systematic_analysis_scientific_papers",
-      "target": "lack_scientific_literature_open_sustainability",
+      "source": "dagomba_rites_of_passage",
+      "target": "islamic_influence",
       "type": "BASED_ON"
     },
     {
-      "source": "opensustain_tech",
-      "target": "science_score",
-      "type": "EVALUATED_WITH"
+      "source": "damba_festival",
+      "target": "islamic_influence",
+      "type": "BASED_ON"
     },
     {
-      "source": "open_source_software",
-      "target": "python",
-      "type": "USES"
+      "source": "bugum_fire_festival",
+      "target": "islamic_influence",
+      "type": "BASED_ON"
     },
     {
-      "source": "open_source_software",
-      "target": "open_source_ecosystem_is_growing",
+      "source": "traditional_dagomba_religion",
+      "target": "dagomba_population_traditional_believers",
       "type": "ACHIEVES"
     },
     {
-      "source": "difficulty_finding_new_projects",
-      "target": "llm_enabled_search",
+      "source": "islamic_influence",
+      "target": "dyula_wangara_muslims",
+      "type": "BASED_ON"
+    },
+    {
+      "source": "afa_muslim_cleric",
+      "target": "sabli_largibu_divination",
       "type": "USES"
     },
     {
-      "source": "opensustain_tech",
-      "target": "github",
-      "type": "EVALUATED_WITH"
+      "source": "afa_muslim_cleric",
+      "target": "tindana_earth_spirit_priest",
+      "type": "OUTPERFORMS"
     }
   ],
   "metadata": {
-    "paper": "Mapping the Open Source Ecosystem for Climate Science and Sustainable Technology",
-    "year": 2026,
-    "extracted_at": "2026-01-28T09:53:48.044849",
-    "paper_length": 92392
+    "paper": "",
+    "year": 2023,
+    "extracted_at": "2026-02-01T16:37:44.310388",
+    "paper_length": 44473
   }
 }

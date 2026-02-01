@@ -8,3 +8,6 @@ export * from './components/ui/dynamicIcon'
 export * from './components/ui/sidebar'
 export * from './components/ui/textarea'
 export * from './components/ui/select'
+export * from './components/ui/avatar';
+export * from './components/ui/input';
+export * from './components/ui/tabs';
