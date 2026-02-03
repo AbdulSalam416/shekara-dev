@@ -12,6 +12,8 @@ import {
 } from "lucide-react"
 import { Textarea } from "@shekara-dev/ui"
 
+const llmModel = process.env.NEXT_PUBLIC_LLM_MODEL
+
 
 export default function InputView() {
   const [inputText, setInputText] = useState("")
@@ -64,8 +66,7 @@ export default function InputView() {
           <span className="font-semibold">Extraction Settings</span>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Using GPT-4o optimized schema for semantic relationship extraction.
-          Confidence threshold set to 0.85.
+          { `Using ${llmModel} optimized schema for semantic relationship extraction.`}
         </p>
       </div>
     </div>

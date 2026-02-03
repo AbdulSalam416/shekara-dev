@@ -1,192 +1,197 @@
-export const defaultGraphData ={
+export const defaultGraphData = {
   "nodes": [
     {
-      "id": "acculturation_theory",
+      "id": "lms",
       "type": "Concept",
-      "label": "Acculturation Theory"
+      "label": "Learning Management System (LMS)"
     },
     {
-      "id": "islamic_influence",
-      "type": "Concept",
-      "label": "Islamic Influence"
-    },
-    {
-      "id": "dagomba_culture",
-      "type": "Concept",
-      "label": "Dagomba Culture"
-    },
-    {
-      "id": "traditional_dagomba_religion",
-      "type": "Concept",
-      "label": "Traditional Dagomba Religion"
-    },
-    {
-      "id": "dagomba_rites_of_passage",
-      "type": "Concept",
-      "label": "Dagomba Rites of Passage"
-    },
-    {
-      "id": "afa_muslim_cleric",
-      "type": "Concept",
-      "label": "Afa (Muslim Cleric)"
-    },
-    {
-      "id": "participant_observation",
+      "id": "customized_lms_development",
       "type": "Method",
-      "label": "Participant Observation"
+      "label": "Customized LMS Development"
     },
     {
-      "id": "interviews_with_elders",
+      "id": "agile_methodology",
       "type": "Method",
-      "label": "Interviews with Dagomba Elders"
+      "label": "Agile Methodology"
     },
     {
-      "id": "na_zangina_conversion",
-      "type": "Finding",
-      "label": "Conversion of King Na Zangina to Islam"
-    },
-    {
-      "id": "islam_dominates_culture",
-      "type": "Finding",
-      "label": "Islam Dominates Indigenous Dagomba Culture"
-    },
-    {
-      "id": "afa_central_to_rites",
-      "type": "Finding",
-      "label": "Afa is Central to All Rites of Passage"
-    },
-    {
-      "id": "damba_festival",
+      "id": "tam",
       "type": "Concept",
-      "label": "Damba Festival"
+      "label": "Technology Acceptance Model (TAM)"
     },
     {
-      "id": "bugum_fire_festival",
+      "id": "utaut",
       "type": "Concept",
-      "label": "Bugum (Fire Festival)"
+      "label": "Unified Theory of Acceptance and Use of Technology (UTAUT)"
     },
     {
-      "id": "islamo_dagomba_culture_gap",
+      "id": "social_presence_theory",
+      "type": "Concept",
+      "label": "Social Presence Theory"
+    },
+    {
+      "id": "coi_framework",
+      "type": "Concept",
+      "label": "Community of Inquiry (CoI) Framework"
+    },
+    {
+      "id": "communication_collaboration",
+      "type": "Concept",
+      "label": "Communication and Collaboration"
+    },
+    {
+      "id": "node_js",
+      "type": "Technology",
+      "label": "Node.js"
+    },
+    {
+      "id": "react_js",
+      "type": "Technology",
+      "label": "React.js"
+    },
+    {
+      "id": "mongodb",
+      "type": "Technology",
+      "label": "MongoDB"
+    },
+    {
+      "id": "firebase",
+      "type": "Technology",
+      "label": "Firebase"
+    },
+    {
+      "id": "learning_outcomes",
+      "type": "Metric",
+      "label": "Learning Outcomes"
+    },
+    {
+      "id": "user_engagement",
+      "type": "Metric",
+      "label": "User Engagement"
+    },
+    {
+      "id": "finding_lms_user_friendly",
+      "type": "Finding",
+      "label": "LMS is Intuitive and User-Friendly"
+    },
+    {
+      "id": "finding_lms_improves_learning",
+      "type": "Finding",
+      "label": "LMS Improves Learning Outcomes"
+    },
+    {
+      "id": "finding_lms_increases_interactions",
+      "type": "Finding",
+      "label": "LMS Increases User Interactions"
+    },
+    {
+      "id": "gap_cost_effective_lms_studies",
       "type": "ResearchGap",
-      "label": "Distinction between Synthesis and New Culture (Islamo-Dagomba Culture)"
+      "label": "Lack of Studies on Cost-Effective LMS Tailored to Individual School Needs"
     },
     {
-      "id": "security_role_of_afa",
-      "type": "Finding",
-      "label": "Afa Provides Security and Divinatory Control for Dagbon State"
+      "id": "gap_oer_strategies",
+      "type": "ResearchGap",
+      "label": "Need for OER Strategies Aligned with Diverse Learning Styles"
     },
     {
-      "id": "dagomba_population_traditional_believers",
-      "type": "Finding",
-      "label": "Less than 10% of Dagomba Population are Traditional Believers"
-    },
-    {
-      "id": "dyula_wangara_muslims",
-      "type": "Concept",
-      "label": "Dyula (Wangara) Settler Muslims"
-    },
-    {
-      "id": "quran",
-      "type": "Dataset",
-      "label": "Qur'an"
-    },
-    {
-      "id": "sabli_largibu_divination",
-      "type": "Concept",
-      "label": "Sabli Largibu (Divination Technique)"
-    },
-    {
-      "id": "tindana_earth_spirit_priest",
-      "type": "Concept",
-      "label": "Tindana (Earth-Spirit Priest)"
+      "id": "gap_ai_tools_research",
+      "type": "ResearchGap",
+      "label": "Need for Research on Personalized Learning and AI-Driven Educational Tools"
     }
   ],
   "relationships": [
     {
-      "source": "dagomba_culture",
-      "target": "acculturation_theory",
+      "source": "customized_lms_development",
+      "target": "agile_methodology",
+      "type": "USES"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "tam",
+      "type": "BASED_ON"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "utaut",
+      "type": "BASED_ON"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "node_js",
+      "type": "USES"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "react_js",
+      "type": "USES"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "mongodb",
+      "type": "USES"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "firebase",
+      "type": "USES"
+    },
+    {
+      "source": "customized_lms_development",
+      "target": "learning_outcomes",
       "type": "EVALUATED_WITH"
     },
     {
-      "source": "participant_observation",
-      "target": "dagomba_culture",
+      "source": "customized_lms_development",
+      "target": "user_engagement",
       "type": "EVALUATED_WITH"
     },
     {
-      "source": "interviews_with_elders",
-      "target": "dagomba_culture",
-      "type": "EVALUATED_WITH"
-    },
-    {
-      "source": "na_zangina_conversion",
-      "target": "islamic_influence",
+      "source": "customized_lms_development",
+      "target": "finding_lms_user_friendly",
       "type": "ACHIEVES"
     },
     {
-      "source": "islamic_influence",
-      "target": "islam_dominates_culture",
+      "source": "customized_lms_development",
+      "target": "finding_lms_improves_learning",
       "type": "ACHIEVES"
     },
     {
-      "source": "islam_dominates_culture",
-      "target": "islamo_dagomba_culture_gap",
+      "source": "customized_lms_development",
+      "target": "finding_lms_increases_interactions",
+      "type": "ACHIEVES"
+    },
+    {
+      "source": "social_presence_theory",
+      "target": "communication_collaboration",
+      "type": "IMPROVES"
+    },
+    {
+      "source": "coi_framework",
+      "target": "communication_collaboration",
+      "type": "IMPROVES"
+    },
+    {
+      "source": "lms",
+      "target": "gap_cost_effective_lms_studies",
       "type": "IDENTIFIES_GAP"
     },
     {
-      "source": "afa_muslim_cleric",
-      "target": "afa_central_to_rites",
-      "type": "ACHIEVES"
+      "source": "lms",
+      "target": "gap_oer_strategies",
+      "type": "IDENTIFIES_GAP"
     },
     {
-      "source": "afa_muslim_cleric",
-      "target": "security_role_of_afa",
-      "type": "ACHIEVES"
-    },
-    {
-      "source": "afa_muslim_cleric",
-      "target": "quran",
-      "type": "USES"
-    },
-    {
-      "source": "dagomba_rites_of_passage",
-      "target": "islamic_influence",
-      "type": "BASED_ON"
-    },
-    {
-      "source": "damba_festival",
-      "target": "islamic_influence",
-      "type": "BASED_ON"
-    },
-    {
-      "source": "bugum_fire_festival",
-      "target": "islamic_influence",
-      "type": "BASED_ON"
-    },
-    {
-      "source": "traditional_dagomba_religion",
-      "target": "dagomba_population_traditional_believers",
-      "type": "ACHIEVES"
-    },
-    {
-      "source": "islamic_influence",
-      "target": "dyula_wangara_muslims",
-      "type": "BASED_ON"
-    },
-    {
-      "source": "afa_muslim_cleric",
-      "target": "sabli_largibu_divination",
-      "type": "USES"
-    },
-    {
-      "source": "afa_muslim_cleric",
-      "target": "tindana_earth_spirit_priest",
-      "type": "OUTPERFORMS"
+      "source": "lms",
+      "target": "gap_ai_tools_research",
+      "type": "IDENTIFIES_GAP"
     }
   ],
   "metadata": {
-    "paper": "",
+    "paper": "development of online learning management system for schools",
     "year": 2023,
-    "extracted_at": "2026-02-01T16:37:44.310388",
-    "paper_length": 44473
+    "extracted_at": "2026-02-03T10:23:04.551890",
+    "paper_length": 63914
   }
 }

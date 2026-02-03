@@ -161,10 +161,10 @@ class ResearchGraphExtractor:
         if node_id not in node_map:
           # First time seeing this node
           node_map[node_id] = dict(node)
-          node_map[node_id]['properties']['frequency'] = 1
+          # node_map[node_id]['properties']['frequency'] = 1
         else:
           # Node seen before - increment frequency
-          node_map[node_id]['properties']['frequency'] += 1
+          # node_map[node_id]['properties']['frequency'] += 1
 
           # Upgrade importance if any instance is high
           if node.get('properties', {}).get('importance') == 'high':

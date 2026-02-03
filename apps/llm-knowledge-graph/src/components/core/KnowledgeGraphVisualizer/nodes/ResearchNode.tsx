@@ -30,15 +30,15 @@ const ResearchNode = ({ data, selected }: NodeProps) => {
       <Card className={`min-w-[150px] max-w-[200px] shadow-sm transition-all duration-200 ${selected ? 'ring-2 ring-primary border-primary' : 'border-muted/60'} ${data.type === 'ResearchGap' ? 'border-dashed' : ''}`}>
         <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-2">
-            <div className={`p-1.5 rounded-md ${getTypeStyles(data.type)}`}>
-              {getTypeIcon(data.type)}
+            <div className={`p-1.5 rounded-md ${getTypeStyles(data.type as string)}`}>
+              {getTypeIcon(data.type as string)}
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              {data.type}
+              {data.type as string}
             </span>
           </div>
           <h3 className="text-xs font-semibold leading-tight text-foreground">
-            {data.label}
+            {data.label as string}
           </h3>
         </CardContent>
       </Card>

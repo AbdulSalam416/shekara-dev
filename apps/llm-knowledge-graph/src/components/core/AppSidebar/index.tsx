@@ -26,7 +26,7 @@ function MindGraphSidebar() {
 
   const navItems = [
     { id: "Input", label: "Analysis", icon: FileText },
-    { id: "Nodes", label: "Knowledge", icon: Database },
+    // { id: "Nodes", label: "Knowledge", icon: Database },
     { id: "History", label: "History", icon: History },
   ] as const;
 
@@ -39,7 +39,7 @@ function MindGraphSidebar() {
   }
 
   return (
-    <Sidebar collapsible='icon' variant='inset' className="border-r bg-sidebar">
+    <Sidebar collapsible='offcanvas' variant='floating' className="border-r bg-sidebar">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
@@ -62,8 +62,8 @@ function MindGraphSidebar() {
                 key={item.id}
                 onClick={() => setCurrentContentView(item.id)}
                 className={`flex-1 flex flex-col items-center py-2 rounded-md transition-all ${
-                  currentContentView === item.id 
-                    ? 'bg-background shadow-sm text-primary' 
+                  currentContentView === item.id
+                    ? 'bg-background shadow-sm text-primary'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >

@@ -18,9 +18,9 @@ export default function ResearchPage() {
           <div className={`transition-all duration-500 ease-in-out border-r border-muted/40 ${isSplitView ? 'w-[65%]' : 'w-full'}`}>
             <div className="h-full relative">
               <KnowledgeGraph />
-              <Button 
-                variant="outline" 
-                size="icon" 
+              <Button
+                variant="outline"
+                size="icon"
                 className="absolute bottom-4 right-4 z-20 bg-white/80 backdrop-blur shadow-sm border-muted/60"
                 onClick={() => setIsSplitView(!isSplitView)}
               >
@@ -28,7 +28,7 @@ export default function ResearchPage() {
               </Button>
             </div>
           </div>
-          
+
           {isSplitView && (
             <div className="w-[35%] h-full overflow-hidden bg-slate-50/30">
               <GapAnalysis />
@@ -51,11 +51,11 @@ export default function ResearchPage() {
                 </TabsTrigger>
               </TabsList>
             </div>
-            
+
             <TabsContent value="graph" className="flex-1 m-0 p-0 overflow-hidden relative">
               <KnowledgeGraph />
             </TabsContent>
-            
+
             <TabsContent value="gaps" className="flex-1 m-0 p-0 overflow-hidden">
               <GapAnalysis />
             </TabsContent>

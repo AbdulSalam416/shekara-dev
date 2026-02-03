@@ -13,6 +13,9 @@ module.exports = {
         '8xl': '88rem',
       },
       colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        border: "hsl(var(--border))",
         primary: {
           default: 'var(--primary-default)',
           secondary: 'var(--primary-secondary)',
@@ -63,7 +66,6 @@ module.exports = {
     }
   },
   corePlugins: {
-
     backgroundOpacity: true,
   },
   plugins: [require('tailwindcss-animate')]};

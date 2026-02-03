@@ -51,7 +51,7 @@ const GapAnalysis = () => {
           <h2 className="text-sm font-bold tracking-tight uppercase text-muted-foreground">Gap Analysis</h2>
           <p className="text-[10px] text-muted-foreground/70">Pattern-based identification</p>
         </div>
-        <Select defaultValue="all">
+        <Select defaultValue="all" onValueChange={(value)=>console.log(value)}>
           <SelectTrigger className="w-[110px] h-7 text-[10px]">
             <SelectValue placeholder="Impact" />
           </SelectTrigger>
@@ -75,7 +75,7 @@ const GapAnalysis = () => {
               </div>
               <CardTitle className="text-xs font-bold leading-tight">{gap.title}</CardTitle>
             </CardHeader>
-            
+
             <CardContent className="p-3 pt-1 space-y-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-1 text-primary text-[9px] font-bold uppercase tracking-wider">

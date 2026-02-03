@@ -3,7 +3,7 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { Card, CardContent } from '@shekara-dev/ui';
-import { Zap, AlertCircle } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 const GapNode = ({ data, selected }: NodeProps) => {
   return (
@@ -21,7 +21,7 @@ const GapNode = ({ data, selected }: NodeProps) => {
             </div>
           </div>
           <h3 className="text-xs font-bold text-pink-900 leading-tight mb-1">
-            {data.label}
+            {data.label as string}
           </h3>
           <p className="text-[9px] text-pink-700/70 leading-relaxed italic">
             "No existing literature combines these concepts."
@@ -30,7 +30,6 @@ const GapNode = ({ data, selected }: NodeProps) => {
       </Card>
       <Handle type="source" position={Position.Bottom} className="!opacity-0" />
 
-      {/* Decorative pulse effect */}
       <div className="absolute -inset-1 bg-pink-400/20 rounded-xl animate-pulse -z-10" />
     </div>
   );

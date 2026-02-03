@@ -24,7 +24,7 @@ TASK: From the research paper text provided below, extract a knowledge graph by 
 
 **EXTRACTION RULES:**
 
-1.  **Prioritize Core Content**: Focus on entities and relationships that are central to the paper's contribution. Extract 15-25 of the most important entities.
+1.  **Prioritize Core Content**: Focus on entities and relationships that are central to the paper's contribution. Extract 10-20 of the most important entities.
 2.  **Focus on Gaps**: Be extra vigilant in identifying `ResearchGap` entities. These are often found in the introduction (motivation), discussion, or conclusion/future work sections.
 3.  **Normalize Entities**: Use consistent, normalized names for entities (e.g., "neural networks" and "neural nets" should both become "neural network"). The `id` should be a lowercase, underscore_separated version of the label.
 4.  **Evidence-Based Relationships**: Only extract relationships that are explicitly stated or very strongly implied in the text.
