@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
+//@ts-ignore
 import CytoscapeComponent from 'react-cytoscapejs';
 import Cytoscape from 'cytoscape';
 // @ts-ignore
@@ -22,7 +23,7 @@ import {
   Zap,
   Activity
 } from 'lucide-react';
-import { defaultGraphData } from './lib/model';
+import { KnowledgeGraph as GraphType } from '../../../lib/types/graph';
 
 // Register the Cola layout extension
 if (typeof window !== 'undefined') {
@@ -46,7 +47,9 @@ interface SelectedNodeInfo extends NodeData {
 type ViewMode = 'all' | 'gaps-only' | 'methods-only' | 'focus';
 type NodeType = 'Method' | 'Concept' | 'Dataset' | 'Metric' | 'Finding' | 'ResearchGap' | 'Technology';
 
-const KnowledgeGraph = () => {
+
+
+const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNode, setSelectedNode] = useState<SelectedNodeInfo | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('all');
@@ -65,12 +68,12 @@ const KnowledgeGraph = () => {
   };
 
   const elements = useMemo(() => {
-    let nodes = defaultGraphData.nodes;
+    let nodes = graphData.nodes;
 
     if (viewMode === 'gaps-only') {
       const gapIds = new Set(nodes.filter(n => n.type === 'ResearchGap').map(n => n.id));
       const connectedToGaps = new Set<string>();
-      defaultGraphData.relationships.forEach(rel => {
+      graphData.relationships.forEach(rel => {
         if (gapIds.has(rel.source)) connectedToGaps.add(rel.target);
         if (gapIds.has(rel.target)) connectedToGaps.add(rel.source);
       });
@@ -78,7 +81,7 @@ const KnowledgeGraph = () => {
       nodes = nodes.filter(n => connectedToGaps.has(n.id));
     } else if (viewMode === 'focus' && focusedNodeId) {
       const connectedIds = new Set<string>([focusedNodeId]);
-      defaultGraphData.relationships.forEach(rel => {
+      graphData.relationships.forEach(rel => {
         if (rel.source === focusedNodeId) connectedIds.add(rel.target);
         if (rel.target === focusedNodeId) connectedIds.add(rel.source);
       });
@@ -98,7 +101,7 @@ const KnowledgeGraph = () => {
         data: { id: node.id, label: node.label, type: node.type },
         classes: node.type.toLowerCase(),
       })),
-      ...defaultGraphData.relationships
+      ...graphData.relationships
         .filter(rel => nodeIds.has(rel.source) && nodeIds.has(rel.target))
         .map((rel, index) => ({
           data: {
@@ -112,10 +115,10 @@ const KnowledgeGraph = () => {
     ];
   }, [searchQuery, viewMode, focusedNodeId, hiddenNodeTypes]);
 
-  const stylesheet: cytoscape.Stylesheet[] = [
+  const stylesheet: cytoscape.StylesheetCSS[] = [
     {
       selector: 'node',
-      style: {
+      css: {
         'background-color': (ele: any) => nodeColors[ele.data('type') as NodeType] || '#64748b',
         'label': 'data(label)',
         'text-wrap': 'wrap',
@@ -138,7 +141,7 @@ const KnowledgeGraph = () => {
     },
     {
       selector: 'node.researchgap',
-      style: {
+      css: {
         'shape': 'hexagon',
         'border-width': '3px',
         'border-color': '#be185d',
@@ -146,7 +149,7 @@ const KnowledgeGraph = () => {
     },
     {
       selector: 'edge',
-      style: {
+      css: {
         'width': 1.5,
         'line-color': '#cbd5e1',
         'target-arrow-color': '#cbd5e1',
@@ -163,7 +166,7 @@ const KnowledgeGraph = () => {
     },
     {
       selector: 'edge.gap-edge',
-      style: {
+      css: {
         'line-color': '#ec4899',
         'target-arrow-color': '#ec4899',
         'width': 2.5,
@@ -172,7 +175,7 @@ const KnowledgeGraph = () => {
     },
     {
       selector: 'node.highlighted',
-      style: {
+      css: {
         'border-width': '4px',
         'border-color': '#f59e0b',
         'opacity': 1,
@@ -181,11 +184,11 @@ const KnowledgeGraph = () => {
     },
     {
       selector: 'node.dimmed',
-      style: { 'opacity': 0.15 } as any,
+       css: { 'opacity': 0.15 } as any,
     },
     {
       selector: 'edge.dimmed',
-      style: { 'opacity': 0.05 } as any,
+      css  : { 'opacity': 0.05 } as any,
     },
   ];
 

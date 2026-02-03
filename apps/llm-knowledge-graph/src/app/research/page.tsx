@@ -1,14 +1,42 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import KnowledgeGraph from '../../components/core/KnowledgeGraphVisualizer/KnowledgeGraph';
+import {KnowledgeGraph as GraphType} from'../../lib/types/graph'
 import GapAnalysis from '../../components/GapAnalysis';
 import MindGraphResearchLayout from '../../components/core/MindGraphResearch';
 import { Tabs, TabsList, TabsTrigger, TabsContent, Button } from '@shekara-dev/ui';
 import { Network, SearchCode, Maximize2, Minimize2 } from 'lucide-react';
-
+import { extractGraph } from '../../services/apiClient';
+import mockGraph from '../../../../ai-service/mocktext.json'
 export default function ResearchPage() {
   const [isSplitView, setIsSplitView] = useState(true);
+  const [graphData, setGraphData] = useState<GraphType>();
+  const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingError, setIsFetchingError] = useState(true);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsFetching(true); // Start loading
+      try {
+        const response = await extractGraph(mockGraph.text, mockGraph.metadata);
+        setGraphData(response.graph)
+      } catch (err : any) {
+        setIsFetchingError(err.message); // Handle network errors or other issues
+      } finally {
+        setIsFetching(false); // Always run after success or failure
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+if(isFetchingError){
+  <>Opppps!</>
+}
+
 
   return (
     <MindGraphResearchLayout>
@@ -17,7 +45,10 @@ export default function ResearchPage() {
         <div className="hidden md:flex flex-1 overflow-hidden relative">
           <div className={`transition-all duration-500 ease-in-out border-r border-muted/40 ${isSplitView ? 'w-[65%]' : 'w-full'}`}>
             <div className="h-full relative">
-              <KnowledgeGraph />
+
+              {isFetching? <p>Loading...</p> :               <KnowledgeGraph graphData={graphData} />
+              }
+
               <Button
                 variant="outline"
                 size="icon"
@@ -53,8 +84,8 @@ export default function ResearchPage() {
             </div>
 
             <TabsContent value="graph" className="flex-1 m-0 p-0 overflow-hidden relative">
-              <KnowledgeGraph />
-            </TabsContent>
+              {isFetching? <p>Loading...</p> :               <KnowledgeGraph graphData={graphData} />
+              }            </TabsContent>
 
             <TabsContent value="gaps" className="flex-1 m-0 p-0 overflow-hidden">
               <GapAnalysis />

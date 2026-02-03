@@ -29,10 +29,48 @@ TASK: From the research paper text provided below, extract a knowledge graph by 
 3.  **Normalize Entities**: Use consistent, normalized names for entities (e.g., "neural networks" and "neural nets" should both become "neural network"). The `id` should be a lowercase, underscore_separated version of the label.
 4.  **Evidence-Based Relationships**: Only extract relationships that are explicitly stated or very strongly implied in the text.
 5.  **Be Specific**: Avoid overly generic entities. "Machine learning" is likely too broad unless it is the main, specific focus of a historical paper.
+6.  **Assign Properties**: For each node, include a `frequency` (set to 1 for single paper analysis), `importance` level (high/medium/low based on how central it is to the paper), and optionally a brief `context` describing where/how it appears.
+7.  **Relationship Confidence**: For each relationship, assign a `confidence` score (0.0-1.0) indicating how certain you are about the relationship, and provide brief `evidence` (a short quote or paraphrase from the text supporting this relationship).
 
 **OUTPUT FORMAT:**
 
-Return ONLY a valid JSON object adhering to the specified Pydantic schema below. Do not include any markdown, explanations, or any text outside of the JSON object.
+Return ONLY a valid JSON object with this exact structure (no markdown code blocks, no explanations):
+
+{{
+  "nodes": [
+    {{
+      "id": "unique_lowercase_underscore_id",
+      "type": "Concept|Method|Dataset|Metric|Finding|Technology|ResearchGap",
+      "label": "Human Readable Display Name",
+      "properties": {{
+        "frequency": 1,
+        "importance": "high|medium|low",
+        "context": "Brief description of where/how this entity appears in the paper"
+      }}
+    }}
+  ],
+  "relationships": [
+    {{
+      "source": "source_node_id",
+      "target": "target_node_id",
+      "type": "USES|IMPROVES|EVALUATED_WITH|ACHIEVES|BASED_ON|OUTPERFORMS|IDENTIFIES_GAP",
+      "properties": {{
+        "confidence": 0.95,
+        "evidence": "Brief quote or paraphrase from the text supporting this relationship"
+      }}
+    }}
+  ]
+}}
+
+**IMPORTANT NOTES:**
+- The `id` field must be unique, lowercase, and use underscores (e.g., "bert_model", "attention_mechanism")
+- The `label` field should be the proper, human-readable name (e.g., "BERT Model", "Attention Mechanism")
+- The `type` field must exactly match one of the specified entity or relationship types
+- All `properties` fields are objects/dictionaries, not strings
+- For single-paper extraction, `frequency` should always be 1 (it will be updated during multi-paper merging)
+- `importance` should reflect how central the entity is to this specific paper's contribution
+- `confidence` should be a float between 0.0 and 1.0 (use 0.9+ for explicit statements, 0.6-0.8 for strong implications, <0.6 for weaker connections)
+- `evidence` should be a concise supporting quote or paraphrase (1-2 sentences max)
 
 {format_instructions}
 
@@ -41,5 +79,5 @@ Return ONLY a valid JSON object adhering to the specified Pydantic schema below.
 {text}
 ---
 
-Extract the knowledge graph now.
+Extract the knowledge graph now. Return ONLY the JSON object, nothing else.
 """
