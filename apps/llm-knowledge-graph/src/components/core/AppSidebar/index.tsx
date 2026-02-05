@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   SidebarContent,
@@ -11,29 +11,37 @@ import {
 import { useState } from 'react';
 import * as React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shekara-dev/ui';
-import { Network, Settings, FileText, History, Database, ChevronRight } from 'lucide-react';
+import {
+  Network,
+  Settings,
+  FileText,
+  History,
+  Database,
+  ChevronRight,
+} from 'lucide-react';
 import InputView from './InputView';
 import NodesView from './NodesView';
 import HistoryView from './HistoryView';
 import { CONSTANTS } from '../../../lib/contants';
 import { extractGraphs } from '../../../services/apiClient';
 
-type viewType = "Input" | "Nodes" | "History"
+type viewType = 'Input' | 'Nodes' | 'History';
 
 function MindGraphSidebar() {
-  const [currentContentView, setCurrentContentView] = useState<viewType>("Input")
+  const [currentContentView, setCurrentContentView] =
+    useState<viewType>('Input');
   const { state } = useSidebar();
   const [isFetching, setIsFetching] = useState(false);
   const [isFetchingError, setIsFetchingError] = useState(null);
-  const isCollapsed = state === "collapsed";
+  const isCollapsed = state === 'collapsed';
 
   const navItems = [
-    { id: "Input", label: "Analysis", icon: FileText },
+    { id: 'Input', label: 'Analysis', icon: FileText },
     // { id: "Nodes", label: "Knowledge", icon: Database },
-    { id: "History", label: "History", icon: History },
+    { id: 'History', label: 'History', icon: History },
   ] as const;
 
-
+  //@ts-ignore
   const loadGraphData = async (papers) => {
     setIsFetching(true);
     setIsFetchingError(null);
@@ -50,17 +58,28 @@ function MindGraphSidebar() {
     }
   };
 
-
   const renderContentView = (view: viewType) => {
     switch (view) {
-      case "Input": return <InputView isGeneratingResponses={isFetching}  onGenerateAction={loadGraphData} />
-      case "Nodes": return <NodesView />
-      case "History": return <HistoryView />
+      case 'Input':
+        return (
+          <InputView
+            isGeneratingResponses={isFetching}
+            onGenerateAction={loadGraphData}
+          />
+        );
+      case 'Nodes':
+        return <NodesView />;
+      case 'History':
+        return <HistoryView />;
     }
-  }
+  };
 
   return (
-    <Sidebar collapsible='offcanvas' variant='floating' className="border-r bg-sidebar">
+    <Sidebar
+      collapsible="offcanvas"
+      variant="floating"
+      className="border-r bg-sidebar"
+    >
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
@@ -68,8 +87,12 @@ function MindGraphSidebar() {
           </div>
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden">
-              <span className="font-bold text-base leading-none truncate">{CONSTANTS.AppName}</span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Research Intelligence</span>
+              <span className="font-bold text-base leading-none truncate">
+                {CONSTANTS.AppName}
+              </span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+                Research Intelligence
+              </span>
             </div>
           )}
         </div>
@@ -101,10 +124,16 @@ function MindGraphSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 border-t bg-muted/5">
-        <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+        <div
+          className={`flex items-center gap-3 ${
+            isCollapsed ? 'justify-center' : ''
+          }`}
+        >
           <Avatar className="h-9 w-9 border-2 border-background shadow-sm">
             <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">JD</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              JD
+            </AvatarFallback>
           </Avatar>
           {!isCollapsed && (
             <>
@@ -114,7 +143,11 @@ function MindGraphSidebar() {
                   Premium • 2.4k Nodes
                 </span>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-primary"
+              >
                 <Settings className="h-4 w-4" />
               </Button>
             </>
@@ -122,7 +155,7 @@ function MindGraphSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
 
 export default MindGraphSidebar;

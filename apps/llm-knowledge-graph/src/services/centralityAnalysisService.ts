@@ -1,13 +1,12 @@
-
-import { KnowledgeGraph, Node } from '../lib/types/graph';
+import { KnowledgeGraph, Node } from '../lib/types';
 
 export interface NodeScore {
   nodeId: string;
   label: string;
   type: string;
-  degreeCentrality: number;  // Raw: number of connections
-  pageRank: number;          // Raw: importance score
-  frequency: number;         // Raw: paper count
+  degreeCentrality: number; // Raw: number of connections
+  pageRank: number; // Raw: importance score
+  frequency: number; // Raw: paper count
 }
 
 export interface CentralityAnalysis {
@@ -15,9 +14,9 @@ export interface CentralityAnalysis {
   nodeScores: NodeScore[];
 
   // Simple categories (top N)
-  mostCentral: NodeScore[];        // Top 10 by degree
-  mostInfluential: NodeScore[];    // Top 10 by PageRank
-  mostFrequent: NodeScore[];       // Top 10 by frequency
+  mostCentral: NodeScore[]; // Top 10 by degree
+  mostInfluential: NodeScore[]; // Top 10 by PageRank
+  mostFrequent: NodeScore[]; // Top 10 by frequency
 
   // By type
   topConcepts: NodeScore[];
@@ -30,7 +29,7 @@ export interface CentralityAnalysis {
     totalEdges: number;
     avgDegree: number;
     maxDegree: number;
-    densityRatio: number;  // edges / possible_edges
+    densityRatio: number; // edges / possible_edges
   };
 }
 
@@ -41,18 +40,18 @@ export class CentralityAnalysisService {
 
   constructor(graph: KnowledgeGraph) {
     this.graph = graph;
-    this.nodeMap = new Map(graph.nodes.map(n => [n.id, n]));
+    this.nodeMap = new Map(graph.nodes.map((n) => [n.id, n]));
     this.adjacencyList = this.buildAdjacencyList();
   }
 
   private buildAdjacencyList(): Map<string, Set<string>> {
     const adj = new Map<string, Set<string>>();
 
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       adj.set(node.id, new Set());
     });
 
-    this.graph.relationships.forEach(rel => {
+    this.graph.relationships.forEach((rel) => {
       adj.get(rel.source)?.add(rel.target);
       adj.get(rel.target)?.add(rel.source);
     });
@@ -68,7 +67,7 @@ export class CentralityAnalysisService {
 
     const pageRankScores = this.computePageRankAll();
 
-    const nodeScores: NodeScore[] = this.graph.nodes.map(node => {
+    const nodeScores: NodeScore[] = this.graph.nodes.map((node) => {
       const degree = this.adjacencyList.get(node.id)?.size || 0;
       const totalNodes = this.graph.nodes.length;
 
@@ -78,19 +77,23 @@ export class CentralityAnalysisService {
         type: node.type,
         degreeCentrality: totalNodes > 1 ? degree / (totalNodes - 1) : 0,
         pageRank: pageRankScores.get(node.id) || 0,
-        frequency: node.properties.frequency || 1
+        frequency: node.properties.frequency || 1,
       };
     });
 
     // 3. Sort and categorize (no interpretation, just rankings)
-    const byDegree = [...nodeScores].sort((a, b) => b.degreeCentrality - a.degreeCentrality);
+    const byDegree = [...nodeScores].sort(
+      (a, b) => b.degreeCentrality - a.degreeCentrality
+    );
     const byPageRank = [...nodeScores].sort((a, b) => b.pageRank - a.pageRank);
-    const byFrequency = [...nodeScores].sort((a, b) => b.frequency - a.frequency);
+    const byFrequency = [...nodeScores].sort(
+      (a, b) => b.frequency - a.frequency
+    );
 
     // 4. Filter by type
-    const concepts = nodeScores.filter(n => n.type === 'Concept');
-    const methods = nodeScores.filter(n => n.type === 'Method');
-    const datasets = nodeScores.filter(n => n.type === 'Dataset');
+    const concepts = nodeScores.filter((n) => n.type === 'Concept');
+    const methods = nodeScores.filter((n) => n.type === 'Method');
+    const datasets = nodeScores.filter((n) => n.type === 'Dataset');
 
     // 5. Calculate stats
     const stats = this.calculateStats();
@@ -100,10 +103,16 @@ export class CentralityAnalysisService {
       mostCentral: byDegree.slice(0, 10),
       mostInfluential: byPageRank.slice(0, 10),
       mostFrequent: byFrequency.slice(0, 10),
-      topConcepts: concepts.sort((a, b) => b.degreeCentrality - a.degreeCentrality).slice(0, 5),
-      topMethods: methods.sort((a, b) => b.degreeCentrality - a.degreeCentrality).slice(0, 5),
-      topDatasets: datasets.sort((a, b) => b.degreeCentrality - a.degreeCentrality).slice(0, 5),
-      stats
+      topConcepts: concepts
+        .sort((a, b) => b.degreeCentrality - a.degreeCentrality)
+        .slice(0, 5),
+      topMethods: methods
+        .sort((a, b) => b.degreeCentrality - a.degreeCentrality)
+        .slice(0, 5),
+      topDatasets: datasets
+        .sort((a, b) => b.degreeCentrality - a.degreeCentrality)
+        .slice(0, 5),
+      stats,
     };
   }
 
@@ -119,7 +128,7 @@ export class CentralityAnalysisService {
 
     // Initialize all nodes with equal rank
     let ranks = new Map<string, number>();
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       ranks.set(node.id, 1.0 / nodeCount);
     });
 
@@ -127,15 +136,16 @@ export class CentralityAnalysisService {
     for (let iter = 0; iter < iterations; iter++) {
       const newRanks = new Map<string, number>();
 
-      this.graph.nodes.forEach(node => {
+      this.graph.nodes.forEach((node) => {
         let sum = 0;
 
         // Get incoming neighbors (who points to this node)
         const incomingNeighbors = this.getIncomingNeighbors(node.id);
 
-        incomingNeighbors.forEach(neighborId => {
+        incomingNeighbors.forEach((neighborId) => {
           const neighborRank = ranks.get(neighborId) || 0;
-          const neighborOutDegree = this.adjacencyList.get(neighborId)?.size || 1;
+          const neighborOutDegree =
+            this.adjacencyList.get(neighborId)?.size || 1;
           sum += neighborRank / neighborOutDegree;
         });
 
@@ -156,7 +166,7 @@ export class CentralityAnalysisService {
   private getIncomingNeighbors(nodeId: string): string[] {
     const incoming: string[] = [];
 
-    this.graph.relationships.forEach(rel => {
+    this.graph.relationships.forEach((rel) => {
       // In undirected graph, both directions count
       if (rel.target === nodeId) {
         incoming.push(rel.source);
@@ -176,14 +186,16 @@ export class CentralityAnalysisService {
     const totalNodes = this.graph.nodes.length;
     const totalEdges = this.graph.relationships.length;
 
-    const degrees = Array.from(this.adjacencyList.values()).map(s => s.size);
-    const avgDegree = degrees.length > 0
-      ? degrees.reduce((a, b) => a + b, 0) / degrees.length
-      : 0;
+    const degrees = Array.from(this.adjacencyList.values()).map((s) => s.size);
+    const avgDegree =
+      degrees.length > 0
+        ? degrees.reduce((a, b) => a + b, 0) / degrees.length
+        : 0;
     const maxDegree = degrees.length > 0 ? Math.max(...degrees) : 0;
 
     // Network density: actual edges / possible edges
-    const possibleEdges = totalNodes > 1 ? (totalNodes * (totalNodes - 1)) / 2 : 1;
+    const possibleEdges =
+      totalNodes > 1 ? (totalNodes * (totalNodes - 1)) / 2 : 1;
     const densityRatio = totalEdges / possibleEdges;
 
     return {
@@ -191,7 +203,7 @@ export class CentralityAnalysisService {
       totalEdges,
       avgDegree: Math.round(avgDegree * 10) / 10,
       maxDegree,
-      densityRatio: Math.round(densityRatio * 1000) / 1000
+      densityRatio: Math.round(densityRatio * 1000) / 1000,
     };
   }
 }

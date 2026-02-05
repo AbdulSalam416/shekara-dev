@@ -32,6 +32,7 @@ interface FileWithBuffer {
 
 interface InputViewProps {
   maxUploads?: number;
+  //@ts-ignore
   onGenerateAction: (papers) => Promise<void>;
   isGeneratingResponses: boolean;
 }
