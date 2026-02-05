@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import { Node } from '../../../lib/types/graph'
 //@ts-ignore
 import CytoscapeComponent from 'react-cytoscapejs';
 import Cytoscape from 'cytoscape';
@@ -21,40 +22,44 @@ import {
   Maximize2,
   Globe,
   Zap,
-  Activity
+  Activity,
+  Award,
+  TrendingUp
 } from 'lucide-react';
-import { KnowledgeGraph as GraphType } from '../../../lib/types/graph';
+import { KnowledgeGraph as GraphType } from '../../../lib/types';
+import { CentralityAnalysis, NodeScore } from '../../../services/centralityAnalysisService';
 
 // Register the Cola layout extension
 if (typeof window !== 'undefined') {
   Cytoscape.use(cola);
 }
 
-// Type definitions
-interface NodeData {
-  id: string;
-  label: string;
-  type: string;
-}
-
-interface SelectedNodeInfo extends NodeData {
+interface SelectedNodeInfo extends Node {
   connectedNodes: number;
   incomingEdges: number;
   outgoingEdges: number;
   color: string;
+  // 🆕 Centrality metrics
+  degreeCentrality?: number;
+  pageRank?: number;
+  centralityRank?: number;
 }
 
-type ViewMode = 'all' | 'gaps-only' | 'methods-only' | 'focus';
+type ViewMode = 'all' | 'gaps-only' | 'methods-only' | 'focus' | 'centrality'; // 🆕
 type NodeType = 'Method' | 'Concept' | 'Dataset' | 'Metric' | 'Finding' | 'ResearchGap' | 'Technology';
 
+interface KnowledgeGraphProps {
+  graphData: GraphType;
+  centralityAnalysis?: CentralityAnalysis | null; // 🆕 Optional centrality data
+}
 
-
-const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
+const KnowledgeGraph = ({ graphData, centralityAnalysis }: KnowledgeGraphProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNode, setSelectedNode] = useState<SelectedNodeInfo | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
   const [hiddenNodeTypes, setHiddenNodeTypes] = useState<Set<NodeType>>(new Set());
+  const [showCentralityMode, setShowCentralityMode] = useState(false); // 🆕
   const cyRef = useRef<cytoscape.Core | null>(null);
 
   const nodeColors: Record<NodeType, string> = {
@@ -67,10 +72,80 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
     Technology: '#6366f1',
   };
 
+  // 🆕 Create centrality lookup map
+  const centralityScores = useMemo(() => {
+    if (!centralityAnalysis) return new Map<string, NodeScore>();
+
+    const map = new Map<string, NodeScore>();
+    centralityAnalysis.nodeScores.forEach(score => {
+      map.set(score.nodeId, score);
+    });
+    return map;
+  }, [centralityAnalysis]);
+
+  // 🆕 Get centrality-based node size
+  const getNodeSize = useCallback((nodeId: string, baseDegree: number): number => {
+    if (!showCentralityMode || !centralityAnalysis) {
+      // Default: size by degree
+      return Math.min(90, 45 + baseDegree * 2.5);
+    }
+
+    // Size by combined centrality score
+    const score = centralityScores.get(nodeId);
+    if (!score) return 45;
+
+    // Weighted combination: degree + pageRank
+    const combinedScore = (score.degreeCentrality * 0.5 + score.pageRank * 0.5);
+    return Math.min(120, 40 + combinedScore * 80); // 40-120px range
+  }, [showCentralityMode, centralityAnalysis, centralityScores]);
+
+  // 🆕 Get centrality-based color intensity
+  const getNodeColor = useCallback((nodeId: string, type: NodeType): string => {
+    const baseColor = nodeColors[type] || '#64748b';
+
+    if (!showCentralityMode || !centralityAnalysis) {
+      return baseColor;
+    }
+
+    const score = centralityScores.get(nodeId);
+    if (!score) return baseColor;
+
+    // Top 10% get highlighted color
+    const isTopNode = centralityAnalysis.mostInfluential
+      .slice(0, Math.ceil(centralityAnalysis.nodeScores.length * 0.1))
+      .some(n => n.nodeId === nodeId);
+
+    if (isTopNode) {
+      return '#f59e0b'; // Gold for top nodes
+    }
+
+    return baseColor;
+  }, [showCentralityMode, centralityAnalysis, centralityScores, nodeColors]);
+
+  // 🆕 Get node border width based on centrality rank
+  const getNodeBorderWidth = useCallback((nodeId: string): number => {
+    if (!showCentralityMode || !centralityAnalysis) return 2;
+
+    const topNodes = centralityAnalysis.mostInfluential.slice(0, 10);
+    const rank = topNodes.findIndex(n => n.nodeId === nodeId);
+
+    if (rank === 0) return 6; // #1
+    if (rank > 0 && rank < 3) return 5; // Top 3
+    if (rank >= 3 && rank < 10) return 4; // Top 10
+
+    return 2; // Others
+  }, [showCentralityMode, centralityAnalysis]);
+
   const elements = useMemo(() => {
     let nodes = graphData.nodes;
 
-    if (viewMode === 'gaps-only') {
+    // 🆕 Centrality mode: show only top N nodes
+    if (viewMode === 'centrality' && centralityAnalysis) {
+      const topNodeIds = new Set(
+        centralityAnalysis.mostInfluential.slice(0, 20).map(n => n.nodeId)
+      );
+      nodes = nodes.filter(n => topNodeIds.has(n.id));
+    } else if (viewMode === 'gaps-only') {
       const gapIds = new Set(nodes.filter(n => n.type === 'ResearchGap').map(n => n.id));
       const connectedToGaps = new Set<string>();
       graphData.relationships.forEach(rel => {
@@ -98,7 +173,14 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
 
     return [
       ...nodes.map(node => ({
-        data: { id: node.id, label: node.label, type: node.type },
+        data: {
+          id: node.id,
+          label: node.label,
+          type: node.type,
+          properties: node.properties,
+          // 🆕 Attach centrality data
+          centralityScore: centralityScores.get(node.id)
+        },
         classes: node.type.toLowerCase(),
       })),
       ...graphData.relationships
@@ -109,17 +191,19 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
             source: rel.source,
             target: rel.target,
             label: rel.type,
+            properties: rel.properties,
           },
           classes: rel.type === 'IDENTIFIES_GAP' ? 'gap-edge' : 'normal-edge',
         })),
     ];
-  }, [searchQuery, viewMode, focusedNodeId, hiddenNodeTypes]);
+  }, [searchQuery, viewMode, focusedNodeId, hiddenNodeTypes, centralityAnalysis, centralityScores, graphData]);
 
+  // 🆕 Updated stylesheet with centrality
   const stylesheet: cytoscape.StylesheetCSS[] = [
     {
       selector: 'node',
       css: {
-        'background-color': (ele: any) => nodeColors[ele.data('type') as NodeType] || '#64748b',
+        'background-color': (ele: any) => getNodeColor(ele.data('id'), ele.data('type')),
         'label': 'data(label)',
         'text-wrap': 'wrap',
         'text-max-width': '100px',
@@ -130,9 +214,9 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
         'color': '#1e293b',
         'text-outline-color': '#ffffff',
         'text-outline-width': '2px',
-        'width': (ele: any) => Math.min(90, 45 + ele.degree() * 2.5) + 'px',
-        'height': (ele: any) => Math.min(90, 45 + ele.degree() * 2.5) + 'px',
-        'border-width': '2px',
+        'width': (ele: any) => getNodeSize(ele.data('id'), ele.degree()) + 'px',
+        'height': (ele: any) => getNodeSize(ele.data('id'), ele.degree()) + 'px',
+        'border-width': (ele: any) => getNodeBorderWidth(ele.data('id')) + 'px',
         'border-color': '#ffffff',
         'overlay-padding': '4px',
         'transition-property': 'background-color, border-color, border-width, opacity',
@@ -184,15 +268,14 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
     },
     {
       selector: 'node.dimmed',
-       css: { 'opacity': 0.15 } as any,
+      css: { 'opacity': 0.15 } as any,
     },
     {
       selector: 'edge.dimmed',
-      css  : { 'opacity': 0.05 } as any,
+      css: { 'opacity': 0.05 } as any,
     },
   ];
 
-  // Professional Cola Layout Configuration
   const layout = {
     name: 'cola',
     animate: true,
@@ -202,8 +285,6 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
     fit: true,
     padding: 50,
     randomize: false,
-
-    // Cola specific parameters
     nodeSpacing: (ele: any) => 30,
     edgeLength: (edge: any) => edge.data('relType') === 'IDENTIFIES_GAP' ? 100 : 180,
     edgeSymDiffLength: undefined,
@@ -211,8 +292,6 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
     unconstrIter: 40,
     userConstIter: 20,
     allConstIter: 20,
-
-    // Constraints
     avoidOverlap: true,
     handleDisconnected: true,
     convergenceThreshold: 0.01,
@@ -223,8 +302,12 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
 
     cy.on('tap', 'node', (evt) => {
       const node = evt.target;
-      const nodeData = node.data();
+      const nodeData: Node = node.data();
       const type = nodeData.type as NodeType;
+
+      // 🆕 Get centrality data for selected node
+      const centralityData = centralityScores.get(nodeData.id);
+      const rank = centralityAnalysis?.mostInfluential.findIndex(n => n.nodeId === nodeData.id);
 
       setSelectedNode({
         id: nodeData.id,
@@ -234,6 +317,11 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
         incomingEdges: node.incomers('edge').length,
         outgoingEdges: node.outgoers('edge').length,
         color: nodeColors[type] || '#64748b',
+        properties: nodeData.properties,
+        // 🆕 Add centrality metrics
+        degreeCentrality: centralityData?.degreeCentrality,
+        pageRank: centralityData?.pageRank,
+        centralityRank: rank !== undefined && rank >= 0 ? rank + 1 : undefined
       });
 
       cy.elements().removeClass('highlighted dimmed');
@@ -248,7 +336,7 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
         cy.elements().removeClass('highlighted dimmed');
       }
     });
-  }, []);
+  }, [centralityScores, centralityAnalysis, nodeColors]);
 
   useEffect(() => {
     if (cyRef.current) {
@@ -271,6 +359,32 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
         </div>
 
         <div className="flex gap-2 pointer-events-auto">
+          {/* 🆕 Centrality Toggle */}
+          {centralityAnalysis && (
+            <Button
+              variant={showCentralityMode ? 'default' : 'secondary'}
+              size="sm"
+              className="bg-white/90 backdrop-blur shadow-sm border-muted/60 h-10"
+              onClick={() => setShowCentralityMode(!showCentralityMode)}
+            >
+              <Award className="w-4 h-4 mr-2" />
+              {showCentralityMode ? 'Hide' : 'Show'} Centrality
+            </Button>
+          )}
+
+          {/* 🆕 View Mode: Top Nodes Only */}
+          {centralityAnalysis && (
+            <Button
+              variant={viewMode === 'centrality' ? 'default' : 'secondary'}
+              size="sm"
+              className="bg-white/90 backdrop-blur shadow-sm border-muted/60 h-10"
+              onClick={() => setViewMode(viewMode === 'centrality' ? 'all' : 'centrality')}
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Top Nodes
+            </Button>
+          )}
+
           <div className="flex bg-white/90 backdrop-blur p-1 rounded-md shadow-sm border border-muted/60">
             <Button variant="ghost" size="icon" onClick={() => cyRef.current?.zoom(cyRef.current.zoom() * 1.2)} className="h-8 w-8"><ZoomIn className="w-4 h-4" /></Button>
             <Button variant="ghost" size="icon" onClick={() => cyRef.current?.zoom(cyRef.current.zoom() * 0.8)} className="h-8 w-8"><ZoomOut className="w-4 h-4" /></Button>
@@ -287,6 +401,21 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
           </Button>
         </div>
       </div>
+
+      {/* 🆕 Centrality Mode Indicator */}
+      {showCentralityMode && (
+        <div className="absolute top-20 left-4 z-10 pointer-events-auto">
+          <div className="bg-amber-500/90 backdrop-blur px-3 py-2 rounded-lg shadow-lg border border-amber-600/50">
+            <div className="flex items-center gap-2 text-white">
+              <Award className="w-4 h-4" />
+              <span className="text-xs font-bold">Centrality Mode Active</span>
+            </div>
+            <p className="text-[10px] text-amber-50 mt-1">
+              Node size = Importance • Gold = Top 10%
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-10 pointer-events-auto">
@@ -312,10 +441,30 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
               </div>
             ))}
           </div>
+
+          {/* 🆕 Centrality Legend */}
+          {showCentralityMode && (
+            <>
+              <div className="border-t border-muted/60 my-2"></div>
+              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                Centrality
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-amber-500" />
+                  <span className="text-[11px] font-medium text-foreground/80">Top 10%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full border-4 border-white bg-slate-400" />
+                  <span className="text-[11px] font-medium text-foreground/80">High Rank</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Node Info Panel */}
+      {/* 🆕 Enhanced Node Info Panel with Centrality */}
       {selectedNode && (
         <div className="absolute bottom-8 right-8 z-20 w-80 pointer-events-auto">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 animate-in slide-in-from-bottom-4 duration-300">
@@ -327,6 +476,14 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
                 <div>
                   <h2 className="font-bold text-slate-900 text-sm leading-tight">{selectedNode.label}</h2>
                   <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">{selectedNode.type}</span>
+
+                  {/* 🆕 Centrality Rank Badge */}
+                  {selectedNode.centralityRank && selectedNode.centralityRank <= 10 && (
+                    <Badge variant="secondary" className="mt-1 text-[9px] h-4 px-1.5">
+                      <Award className="w-2.5 h-2.5 mr-1" />
+                      Rank #{selectedNode.centralityRank}
+                    </Badge>
+                  )}
                 </div>
               </div>
               <button onClick={() => setSelectedNode(null)} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -334,6 +491,54 @@ const KnowledgeGraph = ({graphData}:{graphData:GraphType}) => {
               </button>
             </div>
 
+            {/* Properties */}
+            {selectedNode.properties.frequency && (
+              <p className="text-[10px] text-slate-500 mb-1">
+                Frequency: <span className="font-semibold">{selectedNode.properties.frequency}</span>
+              </p>
+            )}
+            {selectedNode.properties.importance && (
+              <p className="text-[10px] text-slate-500 mb-1 capitalize">
+                Importance: <span className="font-semibold">{selectedNode.properties.importance}</span>
+              </p>
+            )}
+
+            {selectedNode.properties.context && (
+              <div className="mt-2 mb-4">
+                <p className="text-[9px] text-slate-400 uppercase font-bold mb-1">Context</p>
+                <p className="text-[11px] text-slate-700 leading-relaxed">{selectedNode.properties.context}</p>
+              </div>
+            )}
+
+            {/* 🆕 Centrality Metrics */}
+            {(selectedNode.degreeCentrality !== undefined || selectedNode.pageRank !== undefined) && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="text-[9px] text-amber-700 uppercase font-bold mb-2 flex items-center gap-1">
+                  <Award className="w-3 h-3" />
+                  Centrality Metrics
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {selectedNode.degreeCentrality !== undefined && (
+                    <div>
+                      <div className="text-[9px] text-slate-500">Connections</div>
+                      <div className="text-sm font-bold text-slate-900">
+                        {(selectedNode.degreeCentrality * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                  )}
+                  {selectedNode.pageRank !== undefined && (
+                    <div>
+                      <div className="text-[9px] text-slate-500">Influence</div>
+                      <div className="text-sm font-bold text-slate-900">
+                        {(selectedNode.pageRank * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Edge counts */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
                 <div className="text-[9px] text-slate-400 uppercase font-bold mb-1">Incoming</div>

@@ -11,3 +11,4 @@ export * from './components/ui/select'
 export * from './components/ui/avatar';
 export * from './components/ui/input';
 export * from './components/ui/tabs';
+export * from './components/ui/tooltip';

@@ -1,547 +1,166 @@
-# 🚀 MindGraph AI - MVP TODO
+# 🧠 MindGraph AI - The Ultimate Research Co-Pilot
 
-**Goal:** Validate that researchers will use pattern/gap identification for literature reviews  
-**Timeline:** 4 weeks  
-**Success Metric:** 5/10 beta users say "this found something I missed"
+**Mission:** To build an indispensable tool for researchers that transforms the literature review process from a manual chore into an accelerated journey of discovery. We are not just summarizing papers; we are building an AI that reveals the hidden architecture of knowledge, pinpoints research frontiers, and actively assists in creating new insights.
 
----
-
-## 📅 WEEK 1: Foundation & Setup
-
-### Day 1-2: Project Setup
-- [ ] Initialize Next.js project with TypeScript
-  ```bash
-  npx create-next-app@latest mindgraph-ai --typescript --tailwind --app
-  cd mindgraph-ai
-  ```
-- [ ] Install core dependencies
-  ```bash
-  npm install langchain @langchain/google-genai
-  npm install d3 @types/d3
-  npm install react-force-graph-2d 
-  npm install lucide-react
-  npm install pdf-parse 
-  ```
-- [ ] Set up environment variables
-  ```bash
-  # .env.local
-  GOOGLE_API_KEY=your_gemini_api_key_here
-  ```
-- [ ] Create basic folder structure
-  ```
-  src/
-  ├── app/
-  │   ├── page.tsx (landing)
-  │   └── analyze/
-  │       └── page.tsx (main app)
-  ├── components/
-  │   ├── ui/ (shadcn components)
-  │   ├── FileUpload.tsx
-  │   ├── KnowledgeGraph.tsx
-  │   └── GapAnalysis.tsx
-  ├── services/
-  │   ├── graphExtractionService.ts
-  │   ├── gapDetectionService.ts
-  │   └── pdfParser.ts
-  └── types/
-      └── graph.ts
-  ```
-- [ ] Set up Git repository
-  ```bash
-  git init
-  git add .
-  git commit -m "Initial setup"
-  ```
-
-### Day 3: PDF Processing Pipeline
-- [ ] Create PDF text extraction utility
-  ```typescript
-  // src/services/pdfParser.ts
-  export async function extractTextFromPDF(file: File): Promise<string>
-  ```
-- [ ] Test with 3 sample research papers
-- [ ] Handle multi-page PDFs
-- [ ] Extract metadata (title, authors if possible)
-- [ ] Add error handling for corrupted PDFs
-
-### Day 4: LangChain + Gemini Integration
-- [ ] Create graph extraction service
-  ```typescript
-  // src/services/graphExtractionService.ts
-  class ResearchGraphExtractor {
-    async extractFromPaper(text: string): Promise<GraphData>
-  }
-  ```
-- [ ] Configure LLMGraphTransformer with academic schema
-  ```typescript
-  allowedNodes: ["Concept", "Method", "Dataset", "Finding", "Theory"]
-  allowedRelationships: ["USES", "EXTENDS", "CONTRADICTS", "EVALUATES_WITH"]
-  ```
-- [ ] Test extraction on 5 sample papers
-- [ ] Verify JSON output format
-- [ ] Add retry logic for API failures
-- [ ] Log token usage and costs
-
-### Day 5: Data Models & Types
-- [ ] Define TypeScript interfaces
-  ```typescript
-  // src/types/graph.ts
-  interface Node {
-    id: string;
-    type: string;
-    label: string;
-    properties: Record<string, any>;
-  }
-  
-  interface Relationship {
-    source: string;
-    target: string;
-    type: string;
-    properties: Record<string, any>;
-  }
-  
-  interface ResearchGap {
-    id: string;
-    concepts: string[];
-    description: string;
-    evidence: string[];
-    potentialImpact: 'high' | 'medium' | 'low';
-  }
-  ```
-- [ ] Create sample mock data for testing UI
-- [ ] Set up state management (React Context or Zustand)
+**Success Metric:** Researchers report a >50% reduction in the time it takes to get up to speed in a new field and can identify at least 3 novel research questions they wouldn't have found otherwise.
 
 ---
 
-## 📅 WEEK 2: Core Features
+## 🏛️ Core Pillars
 
-### Day 6-7: Gap Detection Algorithm
-- [ ] Create gap detection service
-  ```typescript
-  // src/services/gapDetectionService.ts
-  export function detectResearchGaps(
-    nodes: Node[], 
-    relationships: Relationship[]
-  ): ResearchGap[]
-  ```
-- [ ] Implement missing edge detection
-  - Find concepts that appear frequently but never together
-  - Calculate co-occurrence matrix
-  - Identify statistically significant missing connections
-- [ ] Rank gaps by potential impact
-  ```typescript
-  // High impact = both concepts appear frequently but never together
-  impact = (frequencyA * frequencyB) / totalPapers
-  ```
-- [ ] Generate natural language descriptions
-  ```typescript
-  // Use Gemini to generate "why this matters" for each gap
-  const description = await generateGapDescription(conceptA, conceptB, papers)
-  ```
-- [ ] Test with mock graph data (50 nodes, 100 edges)
+MindGraph AI is built on four powerful pillars of analysis:
 
-### Day 8-9: Basic UI - File Upload
-- [ ] Create landing page with value prop
-  ```tsx
-  // src/app/page.tsx
-  "Upload research papers → Get gap analysis in minutes"
-  ```
-- [ ] Build file upload component
-  ```tsx
-  // src/components/FileUpload.tsx
-  - Drag & drop zone
-  - Multiple file support (max 10 PDFs for MVP)
-  - File size validation (max 10MB per file)
-  - Progress indicator during upload
-  ```
-- [ ] Add file list with remove option
-- [ ] Show paper metadata (filename, size, page count)
-- [ ] Add "Analyze" button (disabled until files uploaded)
-
-### Day 10: Graph Visualization (Quick Version)
-- [ ] Implement React Force Graph visualization
-  ```tsx
-  // src/components/KnowledgeGraph.tsx
-  import ForceGraph2D from 'react-force-graph-2d';
-  
-  - Color nodes by type
-  - Size nodes by frequency
-  - Show relationship labels on hover
-  - Click node to see details
-  ```
-- [ ] Add legend for node types
-- [ ] Add zoom/pan controls
-- [ ] Highlight connected nodes on hover
-- [ ] Test with 20-50 nodes
+1.  **Knowledge Foundation:** Automatically constructs a rich, interconnected knowledge graph from a corpus of research papers, extracting not just citations but concepts, methods, authors, and their relationships.
+2.  **Influence Mapping:** Goes beyond simple citation counts to identify true intellectual influence using sophisticated network analysis algorithms (e.g., PageRank, Betweenness Centrality) to pinpoint seminal works, key authors, and foundational concepts.
+3.  **Temporal & Thematic Analysis:** Visualizes the evolution of the research field over time. It identifies emerging trends, hot topics, and paradigm shifts by clustering themes and tracking their prominence chronologically.
+4.  **Opportunity Discovery & Synthesis:** The core of the "monster" tool. This pillar actively identifies research gaps, unexplored connections between concepts, and conflicting findings. It then uses this structured insight to help generate summaries and draft "Related Work" sections.
 
 ---
 
-## 📅 WEEK 3: Gap Analysis UI & Integration
+## 🗺️ Development Roadmap
 
-### Day 11-12: Gap Analysis Display
-- [ ] Create GapAnalysis component
-  ```tsx
-  // src/components/GapAnalysis.tsx
-  
-  Display for each gap:
-  - Gap title (e.g., "Vision Transformers + Few-Shot Learning")
-  - Impact badge (High/Medium/Low)
-  - Evidence section (which papers mention each concept)
-  - "Why this matters" description
-  - Suggested research question
-  - Related papers list
-  ```
-- [ ] Sort gaps by impact
-- [ ] Add filter by impact level
-- [ ] Add search/filter gaps
-- [ ] Click gap to highlight on graph
+### Phase 1: MVP - Influence & Centrality Engine (4 Weeks)
 
-### Day 13: Full Integration - Analysis Pipeline
-- [ ] Connect all pieces together
-  ```typescript
-  User uploads PDFs
-    ↓
-  Extract text from PDFs
-    ↓
-  Send to Gemini for entity extraction
-    ↓
-  Build knowledge graph
-    ↓
-  Run gap detection algorithm
-    ↓
-  Display graph + gaps
-  ```
-- [ ] Add loading states
-  ```tsx
-  - "Extracting text from PDFs..." (0-20%)
-  - "Analyzing paper 1 of 5..." (20-80%)
-  - "Detecting research gaps..." (80-95%)
-  - "Generating insights..." (95-100%)
-  ```
-- [ ] Add error handling and user feedback
-- [ ] Show analysis summary
-  ```
-  ✓ 5 papers analyzed
-  ✓ 67 concepts extracted
-  ✓ 134 relationships mapped
-  ✓ 3 research gaps identified
-  ```
-
-### Day 14: Dashboard Layout
-- [ ] Create main analysis page layout
-  ```
-  ┌────────────────────────────────────────┐
-  │ Header: MindGraph AI - Analysis        │
-  ├────────────────────────────────────────┤
-  │ ┌────────────┐ ┌──────────────────────┐│
-  │ │            │ │                      ││
-  │ │   Graph    │ │   Gap Analysis       ││
-  │ │            │ │   (scrollable list)  ││
-  │ │            │ │                      ││
-  │ └────────────┘ └──────────────────────┘│
-  │ ┌────────────────────────────────────┐ │
-  │ │ Quick Stats & Insights             │ │
-  │ └────────────────────────────────────┘ │
-  └────────────────────────────────────────┘
-  ```
-- [ ] Add tab navigation (Graph / Gaps / Papers)
-- [ ] Make responsive (mobile-friendly)
-- [ ] Add export button (export gaps as PDF/Markdown)
+**Goal:** Launch a core product that delivers immediate value by identifying key influencers and seminal works. This validates our core graph extraction and analysis pipeline.
 
 ---
 
-## 📅 WEEK 4: Polish & User Testing
+#### **WEEK 1: Foundation & Data Ingestion**
 
-### Day 15-16: UI Polish & UX Improvements
-- [ ] Improve graph visualization
-  - Add better colors and styling
-  - Improve label readability
-  - Add mini-map for large graphs
-  - Add search nodes feature
-- [ ] Add onboarding/tutorial
-  ```
-  "Welcome to MindGraph! Here's how it works:
-  1. Upload 5-10 research papers
-  2. We'll extract concepts and relationships
-  3. Get a list of research gaps you might have missed"
-  ```
-- [ ] Add example/demo with pre-loaded data
-  - "Try with sample papers" button
-  - Show analysis of 5 ML papers
-- [ ] Improve loading experience
-  - Animated progress bar
-  - Show interesting facts while processing
-  - "Did you know? The average literature review takes 40+ hours..."
-
-### Day 17: Data Export Features
-- [ ] Export gap analysis as Markdown
-  ```markdown
-  # Research Gap Analysis
-  Generated by MindGraph AI on [date]
-  
-  ## Gap #1: Vision Transformers + Few-Shot Learning
-  **Impact:** High
-  ...
-  ```
-- [ ] Export graph as SVG/PNG
-- [ ] Export node/edge data as JSON/CSV
-- [ ] Add "Share analysis" link (optional, just copy shareable text for now)
-
-### Day 18-19: Beta User Testing
-- [ ] Find 10 PhD students (Reddit, Twitter, personal network)
-  - r/PhD, r/GradSchool, r/AskAcademia
-  - Academic Twitter
-  - University forums
-- [ ] Send them access (deploy to Vercel)
-- [ ] Give them task:
-  ```
-  "Upload 5-10 papers from your current literature review.
-   Tell us:
-   1. Did we identify any gaps you hadn't thought of?
-   2. Were the gaps relevant/useful?
-   3. Would you use this for your next lit review?"
-  ```
-- [ ] Collect feedback in a spreadsheet
-- [ ] Watch them use it (Loom recordings or live calls)
-- [ ] Note where they get confused
-- [ ] Track usage analytics (how many papers uploaded, time spent, etc.)
-
-### Day 20: Iteration Based on Feedback
-- [ ] Fix top 3 bugs/issues reported
-- [ ] Improve top 2 UX pain points
-- [ ] Adjust gap detection algorithm if needed
-- [ ] Add any quick-win features users requested
-- [ ] Prepare demo for next round of users
+*   [ ] **Project Scaffolding:**
+    *   [ ] Initialize Next.js 14+ project (App Router) with TypeScript, Tailwind CSS.
+    *   [ ] Set up `eslint.config.mjs` and `.prettierrc` for code quality.
+    *   [ ] Establish folder structure with clear separation for `app`, `components`, `services`, `lib`, and `types`.
+*   [ ] **Core Dependencies:**
+    ```bash
+    pnpm add langchain @langchain/google-genai
+    pnpm add graphology graphology-metrics
+    pnpm add pdf-parse
+    pnpm add d3 @types/d3 react-force-graph-2d
+    pnpm add lucide-react
+    pnpm add zustand # For state management
+    pnpm add class-variance-authority clsx tailwind-merge # For UI components
+    ```
+*   [ ] **PDF Processing Pipeline:**
+    *   [ ] Create a robust `pdfParserService` that extracts text and metadata (Title, Authors, Year, DOI).
+    *   [ ] Implement error handling for password-protected, corrupted, or text-less (image-only) PDFs.
+    *   [ ] Use a web worker to offload PDF parsing from the main thread to prevent UI freezing.
+*   [ ] **State Management:**
+    *   [ ] Set up a Zustand store to manage application state: file uploads, analysis status (idle, processing, success, error), graph data, and analysis results.
 
 ---
 
-## 🎯 MVP LAUNCH CHECKLIST
+#### **WEEK 2: Graph Extraction & Analysis Core**
 
-### Technical
-- [ ] Deploy to Vercel/Netlify
-  ```bash
-  vercel --prod
-  ```
-- [ ] Set up error tracking (Sentry or similar)
-- [ ] Add basic analytics (Plausible or Posthog)
-- [ ] Set up monitoring (Vercel Analytics)
-- [ ] Create backup of API keys
-- [ ] Set usage limits on Gemini API (budget alerts)
-
-### Content
-- [ ] Write simple landing page copy
-  ```
-  "Find research gaps your competitors are missing
-   Upload papers → Get insights in minutes"
-  ```
-- [ ] Create 1-minute demo video (Loom)
-- [ ] Write brief documentation
-  - "How to use MindGraph"
-  - "What is a research gap?"
-  - "How we detect gaps"
-- [ ] Prepare FAQ
-  ```
-  - How accurate is the gap detection?
-  - What file formats do you support?
-  - How much does it cost?
-  - Do you store my papers?
-  ```
-
-### Legal/Privacy
-- [ ] Write simple privacy policy
-  ```
-  "We use Gemini API for analysis.
-   Your papers are processed but not stored by Google.
-   We don't train on your data."
-  ```
-- [ ] Add Terms of Service (use template)
-- [ ] Add data deletion option
-
-### Marketing/Outreach
-- [ ] Create Twitter account (@MindGraphAI)
-- [ ] Write launch tweet
-  ```
-  "Built MindGraph to solve my own problem: 
-   finding research gaps in lit reviews takes forever.
-   
-   Now it takes 5 minutes.
-   
-   Upload papers → Get gap analysis
-   
-   Free beta: [link]"
-  ```
-- [ ] Post on Reddit
-  - r/GradSchool: "I built a tool to automate lit review gap analysis"
-  - r/PhD: "Free tool for finding research gaps"
-  - r/MachineLearning: "Built an AI research assistant"
-- [ ] Email 20 researchers you know
-- [ ] Post on LinkedIn (if you have audience)
+*   [ ] **LangChain + Gemini Integration:**
+    *   [ ] Develop a `graphExtractionService` that takes text from multiple documents.
+    *   [ ] Engineer a sophisticated prompt for the Gemini model to extract entities and relationships based on a defined schema (e.g., `Paper`, `Author`, `Concept`, `Method`, `Cites`, `UsesMethod`, `ExploresConcept`).
+    *   [ ] Implement the `LLMGraphTransformer` to reliably convert the LLM's JSON output into a `graphology` instance.
+*   [ ] **Centrality Analysis Service:**
+    *   [ ] Create `centralityAnalysisService.ts`.
+    *   [ ] Implement multiple centrality metrics for a more nuanced understanding of influence:
+        *   **Degree Centrality:** For direct connections.
+        *   **PageRank:** For transitive influence (the "Google" algorithm).
+        *   **Betweenness Centrality:** To find nodes that bridge different clusters of knowledge.
+    *   [ ] Write a function to normalize and combine these scores into a single "Influence Score".
+*   [ ] **Data Models (TypeScript):**
+    *   [ ] Define strict TypeScript interfaces for `NodeData`, `EdgeData`, `GraphData`, and `AnalysisResult`. Ensure types are consistent from the API to the UI.
 
 ---
 
-## 🎉 WEEK 4 END GOAL
+#### **WEEK 3: UI - Visualization & Influence Ranking**
 
-**By end of Week 4, you should have:**
-
-✅ Working MVP deployed and accessible
-✅ 10+ beta users who have uploaded papers
-✅ At least 3 users who said "this helped me find something new"
-✅ Clear feedback on what to improve
-✅ Decision point: continue building or pivot
-
-**Success Criteria:**
-- 5/10 users find at least 1 useful gap
-- Users upload avg 5+ papers each
-- Users spend avg 10+ minutes exploring results
-- At least 2 users ask "when can I pay for this?"
-
-**If these aren't met:**
-- Pivot the feature set (maybe pattern detection instead?)
-- Change target user (maybe industry researchers not PhD students?)
-- Kill the project and move on
-
----
-
-## 📊 METRICS TO TRACK
-
-Create a simple spreadsheet to track:
-
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Beta users signed up | 10 | ? |
-| Papers uploaded | 50+ | ? |
-| Avg papers per user | 5+ | ? |
-| Users who found useful gaps | 5/10 | ? |
-| Time spent analyzing | 10+ min | ? |
-| Would pay ($15/mo) | 3/10 | ? |
-| Bugs reported | <10 | ? |
-| Feature requests | - | ? |
+*   [ ] **Main Dashboard Layout:**
+    *   [ ] Design a clean, modern dashboard using a two-panel layout: Graph Visualization on one side, Analysis & Insights on the other.
+    *   [ ] Implement a multi-step analysis process UI: 1. Upload -> 2. Analyzing -> 3. Dashboard.
+*   [ ] **Graph Visualization (`KnowledgeGraph.tsx`):**
+    *   [ ] Use `react-force-graph-2d` for the initial version.
+    *   [ ] **Crucial UX:**
+        *   Size nodes by **Influence Score**.
+        *   Color nodes by type (Paper, Concept, Author, etc.).
+        *   Implement click-to-focus on a node, highlighting its 1st and 2nd-degree connections.
+        *   Show detailed node info in a sidebar/popover on click.
+        *   Optimize for performance with large graphs (>500 nodes).
+*   [ ] **Influence Dashboard (`InfluencePanel.tsx`):**
+    *   [ ] Create ranked, sortable, and filterable lists for:
+        *   "Seminal Papers"
+        *   "Key Authors"
+        *   "Core Concepts"
+        *   "Bridge Concepts" (from Betweenness Centrality).
+    *   [ ] Clicking an item in the list should focus the corresponding node on the graph.
+    *   [ ] For each item, show a "Why it's influential" justification (e.g., "High PageRank, connects 3 major topic clusters").
 
 ---
 
-## 🛠️ TECH STACK SUMMARY
+#### **WEEK 4: Integration, Polish & Feedback**
 
-**Frontend:**
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- React Force Graph (Week 1-3) → D3.js (later)
-
-**Backend/API:**
-- Next.js API routes
-- LangChain
-- Gemini 1.5 Flash API
-- PDF-parse
-
-**Deployment:**
-- Vercel (frontend + API)
-- Environment variables for API keys
-
-**Analytics:**
-- Plausible or Posthog (privacy-friendly)
-- Simple custom event tracking
+*   [ ] **End-to-End Pipeline Integration:**
+    *   [ ] Connect the full flow: File Upload -> PDF Parsing -> Graph Extraction -> Centrality Analysis -> UI Update.
+    *   [ ] Implement comprehensive loading states, progress indicators, and user-friendly error messages throughout the app.
+*   [ ] **Onboarding & Polish:**
+    *   [ ] Add a "Load Demo" button with a pre-analyzed dataset (e.g., famous papers in AI) to instantly showcase the tool's value.
+    *   [ ] Write clear, concise UI copy that explains what the user is seeing.
+    *   [ ] Add a simple settings panel to tweak graph physics or display.
+*   [ ] **Deployment & User Testing:**
+    *   [ ] Deploy the app to Vercel or Netlify.
+    *   [ ] Recruit 10-15 PhD students or researchers for a closed beta.
+    *   [ ] Create a structured feedback form focusing on the "Aha!" moment, usability, and perceived value of the influence analysis.
+    *   [ ] **Goal:** Get at least 50% of testers to say, "This would have saved me days/weeks on my last literature review."
 
 ---
 
-## 💰 ESTIMATED COSTS (MVP)
+### Phase 2: Temporal & Thematic Intelligence (Post-MVP)
 
-- Gemini API: ~$5-10 (100 papers × $0.0009)
-- Vercel hosting: $0 (free tier)
-- Domain (optional): $12/year
-- **Total: ~$10-20 for 4 weeks**
-
----
-
-## 🚨 ANTI-PATTERNS TO AVOID
-
-❌ **Don't build:**
-- User authentication (not needed for MVP)
-- Payment system (validate first)
-- Mobile app (web is fine)
-- Advanced graph layouts (force-directed is enough)
-- Pattern detection AND contradiction finder (just gaps for MVP)
-- Multi-user collaboration (single user only)
-- Database (store in memory/state for MVP)
-
-✅ **Do build:**
-- The absolute minimum to test the hypothesis
-- One killer feature (gap detection) really well
-- Something you can show users this week
+*   **Thematic Clustering:** Use embedding models (like `text-embedding-ada-002` or Gemini's equivalent) on paper abstracts/concepts to perform clustering (e.g., K-Means, HDBSCAN). This will automatically group papers into thematic clusters.
+*   **Trend Analysis View:** Create a new dashboard view that plots the prominence of themes, concepts, and authors over time (using publication year). Visualize the rise and fall of research trends.
+*   **UI - Timeline View:** Implement an interactive timeline that allows users to slide through time and see how the knowledge graph evolves.
 
 ---
 
-## 📞 VALIDATION QUESTIONS FOR USERS
+### Phase 3: Opportunity Discovery & AI Synthesis (The "Monster")
 
-After they use it, ask:
-
-1. **Did we find any gaps you hadn't noticed?** (Yes/No)
-2. **Were those gaps actually useful/relevant?** (1-5 scale)
-3. **Would you use this for your next lit review?** (Yes/Maybe/No)
-4. **What would make this indispensable for you?** (Open)
-5. **Would you pay $15/month for this?** (Yes/Maybe/No)
-
-If 5+ users say Yes to #1 and #3 → **You have something. Keep building.**
-
-If <5 users say Yes → **Pivot or kill.**
+*   **Gap Analysis Algorithm:** Develop an algorithm that traverses the graph to find:
+    *   **Structural Gaps:** Pairs or groups of concepts that are highly connected within their own clusters but have few or no connections between them (potential for interdisciplinary research).
+    *   **Contradiction Detection:** Use an LLM to review papers that cite each other and prompt it to look for conflicting claims or findings. Flag these on the graph.
+*   **"Research Questions" Generator:** Based on identified gaps, use a generative model to propose novel research questions. E.g., "Concept A and Concept B are rarely studied together. A possible research question is: How does A influence B in the context of C?".
+*   **Automated Synthesis:**
+    *   Allow users to select a set of nodes (papers, concepts).
+    *   Use an LLM, primed with the structured information from the graph, to generate a coherent narrative summary, a "Related Work" section draft, or a compare-and-contrast analysis.
 
 ---
 
-## 🎯 WEEK 5 DECISION TREE
+### Phase 4: Collaboration, Scale & Enterprise
 
-**If MVP is successful:**
-- [ ] Add payment (Stripe)
-- [ ] Improve graph visualization (D3.js)
-- [ ] Add pattern detection
-- [ ] Build waiting list for public launch
-
-**If MVP gets lukewarm response:**
-- [ ] Interview users deeply - what's missing?
-- [ ] Try different feature (contradiction finder?)
-- [ ] Try different user segment (industry researchers?)
-
-**If MVP fails:**
-- [ ] Pivot to B2B (research teams)
-- [ ] Pivot to different domain (legal docs, patents?)
-- [ ] Move on to next idea
+*   **User Accounts & Persistent Storage:** Move from transient, session-based analysis to saved projects. Implement user authentication and use a proper database (e.g., Neon for Postgres or a dedicated Graph DB like Neo4j) to store user projects and graphs.
+*   **Collaboration Features:** Allow users to share their analysis, collaboratively annotate graphs, and build shared knowledge libraries for their research groups.
+*   **API & Integrations:** Expose an API for power users and integrate with tools like Zotero, Mendeley, and Notion.
 
 ---
 
-## 🔥 FIRST STEPS
+## 🤖 Technology & Architecture Principles
 
-**Day 1 - Start Here:**
+*   **Frontend:**
+    *   **Framework:** Next.js (App Router)
+    *   **Styling:** Tailwind CSS
+    *   **Components:** shadcn/ui - Radix UI for accessibility and custom styling.
+    *   **State Management:** Zustand for simple, powerful global state.
+    *   **Graph Viz:** Start with `react-force-graph-2d`. Be prepared to migrate to direct D3 or `vis-network` if more customizability is needed for advanced interactions in later phases.
+*   **Backend & AI:**
+    *   **Server:** Next.js API Routes are sufficient for the MVP. Consider a dedicated backend (e.g., FastAPI with Python for heavy data science) in Phase 3/4 if needed.
+    *   **LLM Orchestration:** LangChain.js to chain prompts and manage interactions with the Gemini API.
+    *   **Graph Engine:** `graphology` is excellent for in-memory graph manipulation and metrics.
+*   **Architecture:**
+    *   **Performant by Default:** Offload heavy computations (PDF parsing, complex graph algorithms) to Web Workers to keep the UI responsive.
+    *   **Modular Services:** Keep logic encapsulated in services (`pdfParserService`, `graphExtractionService`, etc.) for testability and maintainability.
+    *   **Start Simple, Scale Gracefully:** Begin with file/session-based processing. Abstract data access so it can be easily swapped with a database backend later without major refactoring.
 
-```bash
-# 1. Create project
-npx create-next-app@latest mindgraph-ai --typescript --tailwind --app
-cd mindgraph-ai
+---
 
-# 2. Install dependencies
-npm install langchain @langchain/google-genai
-npm install d3 @types/d3
-npm install react-force-graph-2d
-npm install lucide-react
-npm install pdf-parse
+## ✨ Design & UX Principles
 
-# 3. Create .env.local
-echo "GOOGLE_API_KEY=your_key_here" > .env.local
-
-# 4. Create folder structure
-mkdir -p src/components/ui
-mkdir -p src/services
-mkdir -p src/types
-mkdir -p src/app/analyze
-
-# 5. Initialize git
-git init
-git add .
-git commit -m "Initial MindGraph AI setup"
-
-# 6. Start dev server
-npm run dev
-```
-
-**Then check off Day 1-2 tasks above!**
+*   **Clarity from Complexity:** The primary goal is to make a complex web of information instantly understandable. The UI must be clean, intuitive, and guide the user's focus to what's important.
+*   **Interactive Discovery:** The user should feel like they are actively exploring a landscape of knowledge, not just viewing a static report. Clicks, hovers, and filters should reveal deeper layers of insight.
+*   **Insight, Not Just Data:** Don't just show numbers and lists. Tell a story. Explain *why* a paper is influential. Suggest *what* a research gap might mean.
 
 ---
 
@@ -551,11 +170,6 @@ Remember:
 - **Ship fast, learn faster**
 - **Talk to users constantly**
 - **One killer feature beats ten mediocre ones**
-- **If this doesn't work, you'll know in 4 weeks, not 6 months**
+- **If this doesn't work, we'll know in 4 weeks, not 6 months**
 
-**LET'S FUCKING GO! 🚀**
-
----
-
-*Last updated: [Today's date]*
-*Current status: Ready to start Week 1*
+**Let's build a monster. 🚀**

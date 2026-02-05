@@ -1,52 +1,56 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import KnowledgeGraph from '../../components/core/KnowledgeGraphVisualizer/KnowledgeGraph';
-import {KnowledgeGraph as GraphType} from'../../lib/types/graph'
-import GapAnalysis from '../../components/GapAnalysis';
-import MindGraphResearchLayout from '../../components/core/MindGraphResearch';
+import React, { useEffect, useMemo, useState } from 'react';
+
 import { Tabs, TabsList, TabsTrigger, TabsContent, Button } from '@shekara-dev/ui';
 import { Network, SearchCode, Maximize2, Minimize2 } from 'lucide-react';
-import { extractGraph } from '../../services/apiClient';
-import mockGraph from '../../../../ai-service/mocktext.json'
+import { analyzeCentrality, CentralityAnalysis } from '../../services/centralityAnalysisService';
+import KnowledgeGraph from '../../components/core/KnowledgeGraphVisualizer/KnowledgeGraph';
+import KeyInfluencerAnalysis from '../../components/KeyInfluencerAnalysis';
+
 export default function ResearchPage() {
   const [isSplitView, setIsSplitView] = useState(true);
-  const [graphData, setGraphData] = useState<GraphType>();
-  const [isFetching, setIsFetching] = useState(true);
-  const [isFetchingError, setIsFetchingError] = useState(true);
-
+  const [graphData, setGraphData] = useState(null);
+  const loadGraphData = async () => {
+    try {
+      if (typeof window !== 'undefined') {
+        const cachedGraphData = localStorage.getItem('graphData');
+        if (cachedGraphData) {
+          setGraphData(JSON.parse(cachedGraphData));
+          return;
+        }
+      }
+    }
+    catch (error) {
+      console.error("Failed to parse graphData from localStorage", error);
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsFetching(true); // Start loading
-      try {
-        const response = await extractGraph(mockGraph.text, mockGraph.metadata);
-        setGraphData(response.graph)
-      } catch (err : any) {
-        setIsFetchingError(err.message); // Handle network errors or other issues
-      } finally {
-        setIsFetching(false); // Always run after success or failure
-      }
-    };
-
-    fetchData();
+    loadGraphData();
   }, []);
 
+    // Memoize the centrality analysis to avoid re-calculating on every render
+  const centralityAnalysis: CentralityAnalysis | null = useMemo(() => {
+    if (graphData) {
+      return analyzeCentrality(graphData);
+    }
+    return null;
+  }, [graphData]);
 
-if(isFetchingError){
-  <>Opppps!</>
-}
+
+
+
 
 
   return (
-    <MindGraphResearchLayout>
       <div className="flex flex-col h-full overflow-hidden bg-background">
         {/* Desktop View: Split or Single */}
         <div className="hidden md:flex flex-1 overflow-hidden relative">
           <div className={`transition-all duration-500 ease-in-out border-r border-muted/40 ${isSplitView ? 'w-[65%]' : 'w-full'}`}>
             <div className="h-full relative">
 
-              {isFetching? <p>Loading...</p> :               <KnowledgeGraph graphData={graphData} />
+              {graphData && <KnowledgeGraph graphData={graphData} centralityAnalysis={centralityAnalysis} />
               }
 
               <Button
@@ -62,7 +66,8 @@ if(isFetchingError){
 
           {isSplitView && (
             <div className="w-[35%] h-full overflow-hidden bg-slate-50/30">
-              <GapAnalysis />
+              {centralityAnalysis &&              <KeyInfluencerAnalysis analysis={centralityAnalysis} />
+              }
             </div>
           )}
         </div>
@@ -84,15 +89,15 @@ if(isFetchingError){
             </div>
 
             <TabsContent value="graph" className="flex-1 m-0 p-0 overflow-hidden relative">
-              {isFetching? <p>Loading...</p> :               <KnowledgeGraph graphData={graphData} />
+              {graphData &&
+                <KnowledgeGraph graphData={graphData} centralityAnalysis={centralityAnalysis}/>
               }            </TabsContent>
 
             <TabsContent value="gaps" className="flex-1 m-0 p-0 overflow-hidden">
-              <GapAnalysis />
-            </TabsContent>
+              {centralityAnalysis &&              <KeyInfluencerAnalysis analysis={centralityAnalysis} />
+              }            </TabsContent>
           </Tabs>
         </div>
       </div>
-    </MindGraphResearchLayout>
   );
 }

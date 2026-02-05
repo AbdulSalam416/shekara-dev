@@ -16,12 +16,15 @@ import InputView from './InputView';
 import NodesView from './NodesView';
 import HistoryView from './HistoryView';
 import { CONSTANTS } from '../../../lib/contants';
+import { extractGraphs } from '../../../services/apiClient';
 
 type viewType = "Input" | "Nodes" | "History"
 
 function MindGraphSidebar() {
   const [currentContentView, setCurrentContentView] = useState<viewType>("Input")
   const { state } = useSidebar();
+  const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingError, setIsFetchingError] = useState(null);
   const isCollapsed = state === "collapsed";
 
   const navItems = [
@@ -30,9 +33,27 @@ function MindGraphSidebar() {
     { id: "History", label: "History", icon: History },
   ] as const;
 
+
+  const loadGraphData = async (papers) => {
+    setIsFetching(true);
+    setIsFetchingError(null);
+    try {
+      const response = await extractGraphs(papers);
+      const fetchedGraphData = response.graph;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('graphData', JSON.stringify(fetchedGraphData));
+      }
+    } catch (err: any) {
+      setIsFetchingError(err.message);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+
   const renderContentView = (view: viewType) => {
     switch (view) {
-      case "Input": return <InputView />
+      case "Input": return <InputView isGeneratingResponses={isFetching}  onGenerateAction={loadGraphData} />
       case "Nodes": return <NodesView />
       case "History": return <HistoryView />
     }

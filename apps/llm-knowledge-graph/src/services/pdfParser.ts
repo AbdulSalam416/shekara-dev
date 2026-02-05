@@ -1,5 +1,8 @@
 import { PDFParse, TextResult } from 'pdf-parse';
 
+// Set the workerSrc to point to the CDN version for simplicity first.
+PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs');
+
 /**
  * Parses a PDF file buffer and extracts its text content.
  * @param fileBuffer The PDF file content as a Buffer.

@@ -44,11 +44,11 @@ class ResearchGraphExtractor:
     metadata = metadata or {}
 
     # Limit input
-    max_chars = 15000  # ~4k tokens
-    truncated = len(paper_text) > max_chars
-    if truncated:
-      print(f"⚠️  Truncating from {len(paper_text)} to {max_chars} chars")
-      paper_text = paper_text[:max_chars]
+    # max_chars = 15000  # ~4k tokens
+    # truncated = len(paper_text) > max_chars
+    # if truncated:
+    #   print(f"⚠️  Truncating from {len(paper_text)} to {max_chars} chars")
+    #   paper_text = paper_text[:max_chars]
 
     print(f"📝 Processing {len(paper_text)} characters")
     print("\n🤖 Extracting knowledge graph...")
@@ -72,7 +72,7 @@ class ResearchGraphExtractor:
         **metadata,
         "extracted_at": datetime.utcnow().isoformat(),
         "paper_length": len(paper_text),
-        "truncated": truncated,
+        # "truncated": truncated,
         "num_papers": 1
       })
 
