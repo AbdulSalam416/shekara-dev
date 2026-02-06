@@ -417,7 +417,7 @@ const KnowledgeGraph = ({
             <Button
               variant={showCentralityMode ? 'default' : 'secondary'}
               size="sm"
-              className="bg-white/90 backdrop-blur shadow-sm border-muted/60 h-10"
+              className=" backdrop-blur shadow-sm border-muted/60 h-10"
               onClick={() => setShowCentralityMode(!showCentralityMode)}
             >
               <Award className="w-4 h-4 mr-2" />
@@ -430,7 +430,7 @@ const KnowledgeGraph = ({
             <Button
               variant={viewMode === 'centrality' ? 'default' : 'secondary'}
               size="sm"
-              className="bg-white/90 backdrop-blur shadow-sm border-muted/60 h-10"
+              className=" backdrop-blur shadow-sm border-muted/60 h-10"
               onClick={() =>
                 setViewMode(viewMode === 'centrality' ? 'all' : 'centrality')
               }

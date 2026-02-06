@@ -130,26 +130,26 @@ function MindGraphSidebar() {
           }`}
         >
           <Avatar className="h-9 w-9 border-2 border-background shadow-sm">
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src="" />
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-              JD
+              BU
             </AvatarFallback>
           </Avatar>
           {!isCollapsed && (
             <>
               <div className="flex flex-col flex-1 min-w-0">
-                <span className="text-sm font-bold truncate">John Doe</span>
+                <span className="text-sm font-bold truncate">Beta User</span>
                 <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">
-                  Premium • 2.4k Nodes
+                  Beta
                 </span>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-primary"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
+              {/*<Button*/}
+              {/*  variant="ghost"*/}
+              {/*  size="icon"*/}
+              {/*  className="h-8 w-8 text-muted-foreground hover:text-primary"*/}
+              {/*>*/}
+              {/*  <Settings className="h-4 w-4" />*/}
+              {/*</Button>*/}
             </>
           )}
         </div>
