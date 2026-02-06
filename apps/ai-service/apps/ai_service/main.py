@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
+import sys
 from datetime import datetime
 from .utils.research_graph_extractor import get_extractor
 
@@ -96,6 +97,12 @@ extractor = None
 async def startup_event():
   """Initialize services on startup."""
   global extractor
+  # Ensure stdout uses UTF-8 (avoid Windows cp1252 UnicodeEncodeError)
+  try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+  except Exception:
+    # If reconfigure isn't available, continue without raising so startup can proceed
+    pass
   print("\n" + "=" * 60)
   print("🚀 STARTING MINDGRAPH AI API")
   print("=" * 60)
