@@ -1,6 +1,7 @@
-import { GraphResponse } from '../lib/types';
+import { GraphResponse, KnowledgeGraph, CentralityAnalysis } from '../lib/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// for relative paths to the local Next.js API routes
+const API_BASE_URL = ''; // This will make fetch calls relative to the current origin
 
 export async function extractGraph(
   text: string,
@@ -41,9 +42,28 @@ export async function extractGraphs(
   return response.json();
 }
 
+export async function fetchCentralityAnalysis(
+  graph: KnowledgeGraph
+): Promise<CentralityAnalysis> {
+  const response = await fetch(`${API_BASE_URL}/api/centrality-analysis`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ graph }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Centrality analysis failed');
+  }
+
+  return response.json();
+}
+
 export async function checkHealth(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/health`);
+    const response = await fetch(`${API_BASE_URL}/api/health`); // Assuming a local /api/health endpoint
     const data = await response.json();
     return data.status === 'healthy';
   } catch {

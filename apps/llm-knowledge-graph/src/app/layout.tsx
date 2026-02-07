@@ -1,6 +1,7 @@
 import './global.css';
 import '../../../../libs/ui/src/styles/global.css';
-import { SidebarProvider } from '@shekara-dev/ui';
+import Providers from '../components/core/Providers';
+
 export const metadata = {
   title: 'LLM Knowledge Graph',
   description: '.....',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-    <body> {children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

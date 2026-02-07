@@ -1,7 +1,7 @@
 'use client'
 
 
-import { SidebarInset, SidebarProvider, useSidebar } from '@shekara-dev/ui';
+import { SidebarInset, useSidebar } from '@shekara-dev/ui';
 import { cn } from '../../../../../libs/ui/src/components/utils';
 import MindGraphSidebar from './AppSidebar';
 import { AppHeader } from './AppHeader';
@@ -20,6 +20,6 @@ import { AppHeader } from './AppHeader';
 
 
 export default function MindGraphResearchLayout({children}:{children?:React.ReactNode}){
-  return <SidebarProvider><MindGraphResearchLayoutBody>{children}</MindGraphResearchLayoutBody></SidebarProvider>;
+  return <MindGraphResearchLayoutBody>{children}</MindGraphResearchLayoutBody>;
 
 }

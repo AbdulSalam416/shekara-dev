@@ -31,15 +31,16 @@ import {
   Info
 } from 'lucide-react';
 import { CentralityAnalysis, NodeScore } from '../services/centralityAnalysisService';
+import { useGraphStore } from '../store/graphStore';
 
 interface CentralityAnalysisProps {
   analysis: CentralityAnalysis | null;
-  onNodeClick?: (nodeId: string) => void;
 }
 
-const CentralityAnalysisComponent = ({ analysis, onNodeClick }: CentralityAnalysisProps) => {
+const CentralityAnalysisComponent = ({ analysis }: CentralityAnalysisProps) => { // Removed onNodeClick from destructuring
   const [filterType, setFilterType] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<'connected' | 'influential' | 'frequent'>('connected');
+  const setActiveNode = useGraphStore((state) => state.setActiveNode); // Get setActiveNode from store
 
   if (!analysis) {
     return (
@@ -216,7 +217,7 @@ const CentralityAnalysisComponent = ({ analysis, onNodeClick }: CentralityAnalys
           <Card
             key={node.nodeId}
             className="overflow-hidden border-muted/60 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-primary/50"
-            onClick={() => onNodeClick?.(node.nodeId)}
+            onClick={() => setActiveNode(node.nodeId)} // Use setActiveNode from store
           >
             <CardHeader className="p-3 pb-2">
               <div className="flex justify-between items-start mb-2">
@@ -278,7 +279,7 @@ const CentralityAnalysisComponent = ({ analysis, onNodeClick }: CentralityAnalys
                 className="w-full h-7 text-[10px] mt-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onNodeClick?.(node.nodeId);
+                  setActiveNode(node.nodeId); // Use setActiveNode from store
                 }}
               >
                 <ExternalLink className="w-2.5 h-2.5 mr-1.5" />

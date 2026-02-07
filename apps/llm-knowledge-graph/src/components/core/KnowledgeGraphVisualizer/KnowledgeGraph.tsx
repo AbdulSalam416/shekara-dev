@@ -37,6 +37,7 @@ import {
   CentralityAnalysis,
   NodeScore,
 } from '../../../services/centralityAnalysisService';
+import { useGraphStore } from '../../../store/graphStore'; // Import useGraphStore
 
 // Register the Cola layout extension
 if (typeof window !== 'undefined') {
@@ -48,13 +49,12 @@ interface SelectedNodeInfo extends Node {
   incomingEdges: number;
   outgoingEdges: number;
   color: string;
-  // 🆕 Centrality metrics
   degreeCentrality?: number;
   pageRank?: number;
   centralityRank?: number;
 }
 
-type ViewMode = 'all' | 'gaps-only' | 'methods-only' | 'focus' | 'centrality'; // 🆕
+type ViewMode = 'all' | 'gaps-only' | 'focus' | 'centrality';
 type NodeType =
   | 'Method'
   | 'Concept'
@@ -66,7 +66,7 @@ type NodeType =
 
 interface KnowledgeGraphProps {
   graphData: GraphType;
-  centralityAnalysis?: CentralityAnalysis | null; // 🆕 Optional centrality data
+  centralityAnalysis?: CentralityAnalysis | null;
 }
 
 const KnowledgeGraph = ({
@@ -78,12 +78,13 @@ const KnowledgeGraph = ({
     null
   );
   const [viewMode, setViewMode] = useState<ViewMode>('all');
-  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
   const [hiddenNodeTypes, setHiddenNodeTypes] = useState<Set<NodeType>>(
     new Set()
   );
-  const [showCentralityMode, setShowCentralityMode] = useState(false); // 🆕
+  const [showCentralityMode, setShowCentralityMode] = useState(false);
   const cyRef = useRef<cytoscape.Core | null>(null);
+
+  const { activeNodeId, setActiveNode } = useGraphStore(); // Get activeNodeId and setActiveNode from store
 
   const nodeColors: Record<NodeType, string> = {
     Method: '#3b82f6',
@@ -95,7 +96,6 @@ const KnowledgeGraph = ({
     Technology: '#6366f1',
   };
 
-  // 🆕 Create centrality lookup map
   const centralityScores = useMemo(() => {
     if (!centralityAnalysis) return new Map<string, NodeScore>();
 
@@ -106,26 +106,21 @@ const KnowledgeGraph = ({
     return map;
   }, [centralityAnalysis]);
 
-  // 🆕 Get centrality-based node size
   const getNodeSize = useCallback(
     (nodeId: string, baseDegree: number): number => {
       if (!showCentralityMode || !centralityAnalysis) {
-        // Default: size by degree
         return Math.min(90, 45 + baseDegree * 2.5);
       }
 
-      // Size by combined centrality score
       const score = centralityScores.get(nodeId);
       if (!score) return 45;
 
-      // Weighted combination: degree + pageRank
       const combinedScore = score.degreeCentrality * 0.5 + score.pageRank * 0.5;
-      return Math.min(120, 40 + combinedScore * 80); // 40-120px range
+      return Math.min(120, 40 + combinedScore * 80);
     },
     [showCentralityMode, centralityAnalysis, centralityScores]
   );
 
-  // 🆕 Get centrality-based color intensity
   const getNodeColor = useCallback(
     (nodeId: string, type: NodeType): string => {
       const baseColor = nodeColors[type] || '#64748b';
@@ -137,13 +132,12 @@ const KnowledgeGraph = ({
       const score = centralityScores.get(nodeId);
       if (!score) return baseColor;
 
-      // Top 10% get highlighted color
       const isTopNode = centralityAnalysis.mostInfluential
         .slice(0, Math.ceil(centralityAnalysis.nodeScores.length * 0.1))
         .some((n) => n.nodeId === nodeId);
 
       if (isTopNode) {
-        return '#f59e0b'; // Gold for top nodes
+        return '#f59e0b';
       }
 
       return baseColor;
@@ -151,7 +145,6 @@ const KnowledgeGraph = ({
     [showCentralityMode, centralityAnalysis, centralityScores, nodeColors]
   );
 
-  // 🆕 Get node border width based on centrality rank
   const getNodeBorderWidth = useCallback(
     (nodeId: string): number => {
       if (!showCentralityMode || !centralityAnalysis) return 2;
@@ -159,11 +152,11 @@ const KnowledgeGraph = ({
       const topNodes = centralityAnalysis.mostInfluential.slice(0, 10);
       const rank = topNodes.findIndex((n) => n.nodeId === nodeId);
 
-      if (rank === 0) return 6; // #1
-      if (rank > 0 && rank < 3) return 5; // Top 3
-      if (rank >= 3 && rank < 10) return 4; // Top 10
+      if (rank === 0) return 6;
+      if (rank > 0 && rank < 3) return 5;
+      if (rank >= 3 && rank < 10) return 4;
 
-      return 2; // Others
+      return 2;
     },
     [showCentralityMode, centralityAnalysis]
   );
@@ -171,7 +164,6 @@ const KnowledgeGraph = ({
   const elements = useMemo(() => {
     let nodes = graphData.nodes;
 
-    // 🆕 Centrality mode: show only top N nodes
     if (viewMode === 'centrality' && centralityAnalysis) {
       const topNodeIds = new Set(
         centralityAnalysis.mostInfluential.slice(0, 20).map((n) => n.nodeId)
@@ -188,11 +180,11 @@ const KnowledgeGraph = ({
       });
       gapIds.forEach((id) => connectedToGaps.add(id));
       nodes = nodes.filter((n) => connectedToGaps.has(n.id));
-    } else if (viewMode === 'focus' && focusedNodeId) {
-      const connectedIds = new Set<string>([focusedNodeId]);
+    } else if (viewMode === 'focus' && activeNodeId) { // Use activeNodeId here
+      const connectedIds = new Set<string>([activeNodeId]);
       graphData.relationships.forEach((rel) => {
-        if (rel.source === focusedNodeId) connectedIds.add(rel.target);
-        if (rel.target === focusedNodeId) connectedIds.add(rel.source);
+        if (rel.source === activeNodeId) connectedIds.add(rel.target);
+        if (rel.target === activeNodeId) connectedIds.add(rel.source);
       });
       nodes = nodes.filter((n) => connectedIds.has(n.id));
     }
@@ -214,7 +206,6 @@ const KnowledgeGraph = ({
           label: node.label,
           type: node.type,
           properties: node.properties,
-          // 🆕 Attach centrality data
           centralityScore: centralityScores.get(node.id),
         },
         classes: node.type.toLowerCase(),
@@ -235,14 +226,13 @@ const KnowledgeGraph = ({
   }, [
     searchQuery,
     viewMode,
-    focusedNodeId,
+    activeNodeId, // Use activeNodeId here
     hiddenNodeTypes,
     centralityAnalysis,
     centralityScores,
     graphData,
   ]);
 
-  // 🆕 Updated stylesheet with centrality
   const stylesheet: cytoscape.StylesheetCSS[] = [
     {
       selector: 'node',
@@ -351,45 +341,69 @@ const KnowledgeGraph = ({
       cy.on('tap', 'node', (evt) => {
         const node = evt.target;
         const nodeData: Node = node.data();
-        const type = nodeData.type as NodeType;
-
-        // 🆕 Get centrality data for selected node
-        const centralityData = centralityScores.get(nodeData.id);
-        const rank = centralityAnalysis?.mostInfluential.findIndex(
-          (n) => n.nodeId === nodeData.id
-        );
-
-        setSelectedNode({
-          id: nodeData.id,
-          label: nodeData.label,
-          type: nodeData.type,
-          connectedNodes: node.neighborhood().nodes().length,
-          incomingEdges: node.incomers('edge').length,
-          outgoingEdges: node.outgoers('edge').length,
-          color: nodeColors[type] || '#64748b',
-          properties: nodeData.properties,
-          // 🆕 Add centrality metrics
-          degreeCentrality: centralityData?.degreeCentrality,
-          pageRank: centralityData?.pageRank,
-          centralityRank:
-            rank !== undefined && rank >= 0 ? rank + 1 : undefined,
-        });
-
-        cy.elements().removeClass('highlighted dimmed');
-        const neighborhood = node.closedNeighborhood();
-        neighborhood.addClass('highlighted');
-        cy.elements().not(neighborhood).addClass('dimmed');
+        // Set activeNodeId in store
+        setActiveNode(nodeData.id);
       });
 
       cy.on('tap', (evt) => {
         if (evt.target === cy) {
-          setSelectedNode(null);
-          cy.elements().removeClass('highlighted dimmed');
+          // Clear activeNodeId in store
+          setActiveNode(null);
         }
       });
     },
-    [centralityScores, centralityAnalysis, nodeColors]
+    [setActiveNode]
   );
+
+  useEffect(() => {
+    if (!cyRef.current) return;
+
+    const cy = cyRef.current;
+    cy.elements().removeClass('highlighted dimmed');
+
+    if (activeNodeId) {
+      const node = cy.getElementById(activeNodeId);
+      if (node.nonempty()) {
+        const neighborhood = node.closedNeighborhood();
+        neighborhood.addClass('highlighted');
+        cy.elements().not(neighborhood).addClass('dimmed');
+        cy.animate({
+          fit: {
+            eles: node,
+            padding: 100,
+          },
+          duration: 300,
+        });
+
+        // Also update selectedNode if not already set or different
+        if (!selectedNode || selectedNode.id !== activeNodeId) {
+          const nodeData: Node = node.data();
+          const type = nodeData.type as NodeType;
+          const centralityData = centralityScores.get(nodeData.id);
+          const rank = centralityAnalysis?.mostInfluential.findIndex(
+            (n) => n.nodeId === nodeData.id
+          );
+          setSelectedNode({
+            id: nodeData.id,
+            label: nodeData.label,
+            type: nodeData.type,
+            connectedNodes: node.neighborhood().nodes().length,
+            incomingEdges: node.incomers('edge').length,
+            outgoingEdges: node.outgoers('edge').length,
+            color: nodeColors[type] || '#64748b',
+            properties: nodeData.properties,
+            degreeCentrality: centralityData?.degreeCentrality,
+            pageRank: centralityData?.pageRank,
+            centralityRank:
+              rank !== undefined && rank >= 0 ? rank + 1 : undefined,
+          });
+        }
+      }
+    } else {
+      // If activeNodeId is null, ensure selectedNode is also null
+      setSelectedNode(null);
+    }
+  }, [activeNodeId, centralityScores, centralityAnalysis, nodeColors, selectedNode, cyRef.current]);
 
   useEffect(() => {
     if (cyRef.current) {
@@ -586,7 +600,12 @@ const KnowledgeGraph = ({
                 </div>
               </div>
               <button
-                onClick={() => setSelectedNode(null)}
+                onClick={() => {
+
+                  setSelectedNode(null)
+                setActiveNode(null)
+
+                }}
                 className="text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -688,7 +707,7 @@ const KnowledgeGraph = ({
               <Button
                 className="flex-1 h-9 text-xs font-bold"
                 onClick={() => {
-                  setFocusedNodeId(selectedNode.id);
+                  setActiveNode(selectedNode.id); // Set activeNodeId in store
                   setViewMode('focus');
                 }}
               >

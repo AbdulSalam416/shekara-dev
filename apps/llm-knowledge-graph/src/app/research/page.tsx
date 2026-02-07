@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import MindGraphResearchLayout from '../../components/core/MindGraphResearch';
 import {
   Tabs,
@@ -9,42 +9,43 @@ import {
   TabsContent,
   Button,
 } from '@shekara-dev/ui';
-import { Network, SearchCode, Maximize2, Minimize2 } from 'lucide-react';
-import {
-  analyzeCentrality,
-  CentralityAnalysis,
-} from '../../services/centralityAnalysisService';
+import { Network, SearchCode, Maximize2, Minimize2, Loader2, AlertCircle, GitGraph } from 'lucide-react';
+import { CentralityAnalysis } from '../../services/centralityAnalysisService';
 import KnowledgeGraph from '../../components/core/KnowledgeGraphVisualizer/KnowledgeGraph';
 import KeyInfluencerAnalysis from '../../components/KeyInfluencerAnalysis';
+import { KnowledgeGraph as GraphType } from '../../lib/types';
+import { useGraphStore } from '../../store/graphStore';
+
 
 export default function ResearchPage() {
   const [isSplitView, setIsSplitView] = useState(true);
-  const [graphData, setGraphData] = useState(null);
-  const loadGraphData = async () => {
-    try {
-      if (typeof window !== 'undefined') {
-        const cachedGraphData = localStorage.getItem('graphData');
-        if (cachedGraphData) {
-          setGraphData(JSON.parse(cachedGraphData));
-          return;
-        }
-      }
-    } catch (error) {
-      console.error('Failed to parse graphData from localStorage', error);
-    }
-  };
 
-  useEffect(() => {
-    loadGraphData();
-  }, []);
+  const { currentGraph, currentCentralityAnalysis, isGraphExtractionPending } = useGraphStore();
 
-  // Memoize the centrality analysis to avoid re-calculating on every render
-  const centralityAnalysis: CentralityAnalysis | null = useMemo(() => {
-    if (graphData) {
-      return analyzeCentrality(graphData);
-    }
-    return null;
-  }, [graphData]);
+  if (isGraphExtractionPending) {
+    return (
+      <MindGraphResearchLayout>
+        <div className="flex flex-col h-full items-center justify-center bg-background">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <p className="text-lg text-muted-foreground">Generating graph data and performing centrality analysis...</p>
+          <p className="text-sm text-muted-foreground/70">This may take a few moments.</p>
+        </div>
+      </MindGraphResearchLayout>
+    );
+  }
+
+  if (!currentGraph || !currentCentralityAnalysis) {
+    return (
+      <MindGraphResearchLayout>
+        <div className="flex flex-col h-full items-center justify-center bg-background">
+          <GitGraph className="h-12 w-12 text-muted-foreground/40 mb-4" />
+          <h2 className="text-xl font-bold text-foreground mb-2">No Graph Loaded</h2>
+          <p className="text-lg text-muted-foreground mb-4">Upload a PDF or paste text to begin your research analysis.</p>
+          <p className="text-sm text-muted-foreground/70">Your generated graphs will appear here.</p>
+        </div>
+      </MindGraphResearchLayout>
+    );
+  }
 
   return (
     <MindGraphResearchLayout>
@@ -56,10 +57,10 @@ export default function ResearchPage() {
             }`}
           >
             <div className="h-full relative">
-              {graphData && (
+              {currentGraph && (
                 <KnowledgeGraph
-                  graphData={graphData}
-                  centralityAnalysis={centralityAnalysis}
+                  graphData={currentGraph}
+                  centralityAnalysis={currentCentralityAnalysis}
                 />
               )}
 
@@ -80,8 +81,8 @@ export default function ResearchPage() {
 
           {isSplitView && (
             <div className="w-[35%] h-full overflow-hidden bg-slate-50/30">
-              {centralityAnalysis && (
-                <KeyInfluencerAnalysis analysis={centralityAnalysis} />
+              {currentCentralityAnalysis && (
+                <KeyInfluencerAnalysis analysis={currentCentralityAnalysis} />
               )}
             </div>
           )}
@@ -110,10 +111,10 @@ export default function ResearchPage() {
               value="graph"
               className="flex-1 m-0 p-0 overflow-hidden relative"
             >
-              {graphData && (
+              {currentGraph && (
                 <KnowledgeGraph
-                  graphData={graphData}
-                  centralityAnalysis={centralityAnalysis}
+                  graphData={currentGraph}
+                  centralityAnalysis={currentCentralityAnalysis}
                 />
               )}{' '}
             </TabsContent>
@@ -122,8 +123,8 @@ export default function ResearchPage() {
               value="gaps"
               className="flex-1 m-0 p-0 overflow-hidden"
             >
-              {centralityAnalysis && (
-                <KeyInfluencerAnalysis analysis={centralityAnalysis} />
+              {currentCentralityAnalysis && (
+                <KeyInfluencerAnalysis analysis={currentCentralityAnalysis} />
               )}{' '}
             </TabsContent>
           </Tabs>

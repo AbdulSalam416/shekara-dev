@@ -6,24 +6,23 @@ import {
   SidebarHeader,
   Sidebar,
   useSidebar,
-  Button,
 } from '@shekara-dev/ui';
 import { useState } from 'react';
 import * as React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shekara-dev/ui';
 import {
   Network,
-  Settings,
   FileText,
   History,
-  Database,
-  ChevronRight,
 } from 'lucide-react';
 import InputView from './InputView';
 import NodesView from './NodesView';
 import HistoryView from './HistoryView';
 import { CONSTANTS } from '../../../lib/contants';
-import { extractGraphs } from '../../../services/apiClient';
+import { extractGraphs, fetchCentralityAnalysis } from '../../../services/apiClient';
+import { useMutation } from '@tanstack/react-query';
+import { useGraphStore } from '../../../store/graphStore';
+import { CentralityAnalysis } from '../../../services/centralityAnalysisService';
 
 type viewType = 'Input' | 'Nodes' | 'History';
 
@@ -31,8 +30,6 @@ function MindGraphSidebar() {
   const [currentContentView, setCurrentContentView] =
     useState<viewType>('Input');
   const { state } = useSidebar();
-  const [isFetching, setIsFetching] = useState(false);
-  const [isFetchingError, setIsFetchingError] = useState(null);
   const isCollapsed = state === 'collapsed';
 
   const navItems = [
@@ -41,20 +38,33 @@ function MindGraphSidebar() {
     { id: 'History', label: 'History', icon: History },
   ] as const;
 
-  //@ts-ignore
-  const loadGraphData = async (papers) => {
-    setIsFetching(true);
-    setIsFetchingError(null);
-    try {
-      const response = await extractGraphs(papers);
-      const fetchedGraphData = response.graph;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('graphData', JSON.stringify(fetchedGraphData));
-      }
-    } catch (err: any) {
-      setIsFetchingError(err.message);
-    } finally {
-      setIsFetching(false);
+  const { setGraph, addGraphToHistory, setIsGraphExtractionPending } = useGraphStore();
+
+  const graphExtractionMutation = useMutation({
+    mutationFn: extractGraphs,
+    onMutate: () => {
+      setIsGraphExtractionPending(true); // Set pending state to true when mutation starts
+    },
+    onSuccess: async (data) => {
+      const fetchedGraphData = data.graph;
+      const centralityAnalysis: CentralityAnalysis = await fetchCentralityAnalysis(fetchedGraphData);
+
+      setGraph(fetchedGraphData, centralityAnalysis);
+      addGraphToHistory(fetchedGraphData, centralityAnalysis);
+      setIsGraphExtractionPending(false); // Set pending state to false on success
+    },
+    onError: (error: any) => {
+      console.error('Graph extraction failed:', error);
+      setIsGraphExtractionPending(false); // Set pending state to false on error
+      // TODO: Implement a global error state to display to the user
+    },
+  });
+
+  const loadGraphData = async (papers: Array<{ text: string; id: string; error?: string }>) => {
+    // Filter out papers with errors before sending to mutation
+    const validPapers = papers.filter(p => !p.error);
+    if (validPapers.length > 0) {
+      await graphExtractionMutation.mutateAsync(validPapers);
     }
   };
 
@@ -63,7 +73,7 @@ function MindGraphSidebar() {
       case 'Input':
         return (
           <InputView
-            isGeneratingResponses={isFetching}
+            isGeneratingResponses={graphExtractionMutation.isPending}
             onGenerateAction={loadGraphData}
           />
         );
@@ -143,13 +153,6 @@ function MindGraphSidebar() {
                   Beta
                 </span>
               </div>
-              {/*<Button*/}
-              {/*  variant="ghost"*/}
-              {/*  size="icon"*/}
-              {/*  className="h-8 w-8 text-muted-foreground hover:text-primary"*/}
-              {/*>*/}
-              {/*  <Settings className="h-4 w-4" />*/}
-              {/*</Button>*/}
             </>
           )}
         </div>
