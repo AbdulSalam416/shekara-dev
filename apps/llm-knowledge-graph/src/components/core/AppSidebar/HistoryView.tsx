@@ -29,7 +29,6 @@ export default function HistoryView() {
     currentGraph,
     loadGraphFromHistory,
     removeGraphFromHistory,
-    clearHistory,
     renameHistoryEntry
   } = useGraphStore();
 
@@ -65,28 +64,11 @@ export default function HistoryView() {
         <h2 className="text-sm font-bold tracking-tight uppercase text-muted-foreground">
           Analysis History ({graphHistory.length})
         </h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-destructive hover:text-destructive/80 h-8"
-          onClick={() => clearHistory()}
-          disabled={graphHistory.length === 0}
-        >
-          <Trash className="w-4 h-4 mr-2" />
-          Clear All
-        </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {graphHistory.map((entry) => (
-          <Card
-            key={entry.id}
-            className={`relative overflow-hidden group transition-all duration-200 ${
-              currentGraph?.metadata?.timestamp === entry.graph.metadata?.timestamp
-                ? 'border-primary shadow-md'
-                : 'border-muted/60 hover:shadow-md hover:border-primary/50'
-            }`}
-          >
+          <div className={` rounded cursor-pointer  ${entry.graph === currentGraph ? ' border border-primary':'border' } border-opacity-50 `} onClick={() => loadGraphFromHistory(entry.id)}>
             <CardHeader className="p-3 pb-2 flex-row items-center justify-between">
               {editingId === entry.id ? (
                 <Input
@@ -159,26 +141,7 @@ export default function HistoryView() {
                 Nodes: {entry.graph.nodes.length}, Edges: {entry.graph.relationships.length}
               </p>
             </CardContent>
-
-            <CardFooter className="p-3 pt-0">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full h-8 text-xs"
-                onClick={() => loadGraphFromHistory(entry.id)}
-                // disabled={currentGraph?.metadata?.timestamp === entry.graph.metadata?.timestamp}
-              >
-                {currentGraph?.metadata?.timestamp === entry.graph.metadata?.timestamp ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 mr-2" />
-                    Active
-                  </>
-                ) : (
-                  'View in Graph'
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

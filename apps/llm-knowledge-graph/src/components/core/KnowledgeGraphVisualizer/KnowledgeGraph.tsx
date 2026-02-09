@@ -6,6 +6,7 @@ import React, {
   useState,
   useEffect,
   useRef,
+  useImperativeHandle,
 } from 'react';
 import { Node } from '../../../lib/types';
 //@ts-ignore
@@ -64,15 +65,17 @@ type NodeType =
   | 'ResearchGap'
   | 'Technology';
 
+export interface KnowledgeGraphRef {
+  toImage: () => Promise<string | null>;
+}
+
 interface KnowledgeGraphProps {
   graphData: GraphType;
   centralityAnalysis?: CentralityAnalysis | null;
 }
 
-const KnowledgeGraph = ({
-  graphData,
-  centralityAnalysis,
-}: KnowledgeGraphProps) => {
+const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
+  ({ graphData, centralityAnalysis }, ref) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNode, setSelectedNode] = useState<SelectedNodeInfo | null>(
     null
@@ -81,10 +84,10 @@ const KnowledgeGraph = ({
   const [hiddenNodeTypes, setHiddenNodeTypes] = useState<Set<NodeType>>(
     new Set()
   );
-  const [showCentralityMode, setShowCentralityMode] = useState(false);
-  const cyRef = useRef<cytoscape.Core | null>(null);
+      const [showCentralityMode, setShowCentralityMode] = useState(false);
+      const cyRef = useRef<cytoscape.Core | null>(null);
 
-  const { activeNodeId, setActiveNode } = useGraphStore(); // Get activeNodeId and setActiveNode from store
+      const { activeNodeId, setActiveNode } = useGraphStore(); // Get activeNodeId and setActiveNode from store
 
   const nodeColors: Record<NodeType, string> = {
     Method: '#3b82f6',
@@ -411,9 +414,31 @@ const KnowledgeGraph = ({
     }
   }, [elements]);
 
-  return (
-    <div className="w-full h-full bg-slate-50/30 relative overflow-hidden">
-      {/* Top Controls */}
+      // Expose toImage method
+      useImperativeHandle(ref, () => ({
+        toImage: async () => {
+          if (!cyRef.current) {
+            console.error("Cytoscape instance not available for image capture.");
+            return null;
+          }
+          try {
+            // cy.png() directly exports the graph as a data URL
+            const imageData = cyRef.current.png({
+              output: 'base64',
+              full: true, // Capture the full graph, not just the viewport
+              scale: 2,   // Increase scale for better resolution in PDF
+            });
+            return imageData;
+          } catch (error) {
+            console.error("Error converting graph to PNG:", error);
+            return null;
+          }
+        },
+      }));
+
+
+      return (
+        <div className="w-full h-full bg-slate-50/30 relative overflow-hidden">      {/* Top Controls */}
       <div className="absolute top-4 left-4 right-4 z-10 flex flex-col md:flex-row gap-2 pointer-events-none">
         <div className="relative flex-1 max-w-md pointer-events-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -742,6 +767,6 @@ const KnowledgeGraph = ({
       />
     </div>
   );
-};
+})
 
 export default KnowledgeGraph;
