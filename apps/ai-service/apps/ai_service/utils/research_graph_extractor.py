@@ -190,53 +190,98 @@ class ResearchGraphExtractor:
     return merged
 
   def _merge_graphs(self, graphs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Merge multiple graphs, incrementing frequency for duplicate nodes."""
+    """Merge multiple graphs, incrementing frequency for duplicate nodes,
+    and considering nodes with the same semantic_key as the same.
+    """
 
-    node_map = {}  # id -> node with aggregated properties
-    relationship_set = set()  # (source, type, target)
+    # Stores canonical node (by its original ID, or first encountered ID if semantic key is used)
+    node_map = {}  # deduplication_key -> canonical_node
+    # Map original node ID to its canonical node ID (after merging)
+    id_to_canonical_id_map = {}
+
+    relationship_set = set()  # (source_id, type, target_id)
     merged_relationships = []
 
-    for graph in graphs:
-      # Merge nodes
-      for node in graph.get('nodes', []):
-        node_id = node['id']
+    # Helper to get the key for deduplication
+    def get_deduplication_key(node):
+        semantic_key = node.get('properties', {}).get('semantic_key')
+        if semantic_key:
+            return f"semantic_{semantic_key}"
+        return f"id_{node['id']}"
 
-        if node_id not in node_map:
-          # First time seeing this node
+    for graph in graphs:
+      for node in graph.get('nodes', []):
+        deduplication_key = get_deduplication_key(node)
+        original_node_id = node['id']
+
+        if deduplication_key not in node_map:
+          # This is the first time we see a node with this deduplication_key
+          # Make a copy and initialize its aggregated properties
           node_copy = {
-            'id': node['id'],
+            'id': original_node_id, # This becomes the canonical ID for this semantic group
             'type': node['type'],
             'label': node['label'],
             'properties': {
               'frequency': 1,
               'importance': node.get('properties', {}).get('importance', 'medium'),
               'context': node.get('properties', {}).get('context'),
-              'paperId': node.get('properties', {}).get('paperId')
+              'paperId': node.get('properties', {}).get('paperId'),
+              'semantic_key': node.get('properties', {}).get('semantic_key')
             }
           }
-          node_map[node_id] = node_copy
+          node_map[deduplication_key] = node_copy
+          id_to_canonical_id_map[original_node_id] = original_node_id
         else:
-          # Node seen before - increment frequency
-          node_map[node_id]['properties']['frequency'] += 1
+          # A node with this deduplication_key has been seen before. Merge this node's info.
+          existing_node = node_map[deduplication_key]
+          id_to_canonical_id_map[original_node_id] = existing_node['id'] # Map current node's ID to the canonical ID
 
-          # Upgrade importance if any instance is high
-          current_importance = node_map[node_id]['properties'].get('importance', 'medium')
+          existing_node['properties']['frequency'] += 1
+
+          # Update importance
+          current_importance = existing_node['properties'].get('importance', 'medium')
           new_importance = node.get('properties', {}).get('importance', 'medium')
-
           if new_importance == 'high' or current_importance == 'high':
-            node_map[node_id]['properties']['importance'] = 'high'
-          elif new_importance == 'medium' or current_importance == 'medium':
-            node_map[node_id]['properties']['importance'] = 'medium'
+            existing_node['properties']['importance'] = 'high'
+          elif new_importance == 'medium' and current_importance == 'low':
+            existing_node['properties']['importance'] = 'medium'
 
-      # Merge relationships (deduplicate)
+          # Update context (e.g., take the longest or first non-empty)
+          new_context = node.get('properties', {}).get('context')
+          if new_context and (not existing_node['properties'].get('context') or \
+                              len(new_context) > len(existing_node['properties']['context'])):
+            existing_node['properties']['context'] = new_context
+          
+          # Update paperId to be a comma-separated string of all unique paperIds
+          existing_paper_ids_str = existing_node['properties'].get('paperId')
+          new_paper_id = node.get('properties', {}).get('paperId')
+
+          combined_paper_ids = set()
+          if existing_paper_ids_str:
+              combined_paper_ids.update(existing_paper_ids_str.split(','))
+          if new_paper_id:
+              combined_paper_ids.add(new_paper_id)
+
+          if combined_paper_ids:
+              existing_node['properties']['paperId'] = ','.join(sorted(list(combined_paper_ids)))
+          else:
+              existing_node['properties']['paperId'] = None
+
+
+    # Now that nodes are merged and ID mappings are created, merge relationships
+    for graph in graphs:
       for rel in graph.get('relationships', []):
-        rel_key = (rel['source'], rel['type'], rel['target'])
+        # Resolve source and target IDs to their canonical IDs
+        canonical_source_id = id_to_canonical_id_map.get(rel['source'], rel['source'])
+        canonical_target_id = id_to_canonical_id_map.get(rel['target'], rel['target'])
+
+        rel_key = (canonical_source_id, rel['type'], canonical_target_id)
 
         if rel_key not in relationship_set:
           relationship_set.add(rel_key)
           merged_relationships.append({
-            'source': rel['source'],
-            'target': rel['target'],
+            'source': canonical_source_id,
+            'target': canonical_target_id,
             'type': rel['type'],
             'properties': {
               'confidence': rel.get('properties', {}).get('confidence', 0.8),
@@ -246,9 +291,9 @@ class ResearchGraphExtractor:
         else:
           # Relationship exists - boost confidence slightly
           for existing_rel in merged_relationships:
-            if (existing_rel['source'] == rel['source'] and
+            if (existing_rel['source'] == canonical_source_id and
               existing_rel['type'] == rel['type'] and
-              existing_rel['target'] == rel['target']):
+              existing_rel['target'] == canonical_target_id):
               current_conf = existing_rel['properties'].get('confidence', 0.8)
               existing_rel['properties']['confidence'] = min(1.0, current_conf + 0.1)
               break

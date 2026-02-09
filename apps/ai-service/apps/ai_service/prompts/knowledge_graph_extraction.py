@@ -15,7 +15,7 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
 
                                       1. Concept
                                       Core ideas, theoretical constructs, assumptions, or problem framings that shape the research.
-                                      → Include implicit assumptions when they materially influence methods or conclusions.
+                                      → Include implicit assumptions when they materially influence methods or conclusions. Treat generalizable claims as Concepts when they could apply beyond this paper.
 
                                       2. Method
                                       Specific techniques, algorithms, models, or experimental approaches proposed or used.
@@ -35,7 +35,7 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       Treat findings as **positions**, not just results.
 
                                       6. Technology
-                                      Specific software, frameworks, tools, or hardware systems that materially enable the work.
+                                      Specific software, frameworks, tools, or hardware systems that materially enable the work or are standard infrastructure assumed by the method.
 
                                       7. ResearchGap
                                       Unresolved problems, limitations, missing connections, or open questions.
@@ -64,7 +64,6 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       ADVANCED EXTRACTION GUIDELINES (CRITICAL):
 
                                       1. Prioritize Leverage Over Coverage
-                                      Extract 10–20 entities maximum.
                                       Prefer entities that:
                                       - influence multiple others,
                                       - encode assumptions,
@@ -93,6 +92,10 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
 
                                       7. Relationship Evidence Discipline
                                       Confidence should reflect epistemic certainty, not rhetorical strength.
+                                      8. Canonical Awareness (Important)
+                                      When extracting entities, prefer names that would be recognizable and reusable across multiple papers in the same subfield, even if the paper uses a more specific phrasing.
+                                      9. Semantic Key Generation (New)
+                                      For each entity, generate a 'semantic_key' that represents the core, normalized concept, independent of specific phrasing or capitalization. This key should allow for deduplication of entities that are semantically identical but might appear with different labels or IDs across various papers. For example, "Deep Learning" and "deep learning algorithms" might both have a semantic_key of "deep_learning". This will help in merging entities across papers in the knowledge graph.
 
                                       ---
 
@@ -108,7 +111,8 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
       "properties": {{
         "frequency": 1,
         "importance": "high|medium|low",
-        "context": "Brief description of where/how this entity appears in the paper"
+        "context": "Brief description of where/how this entity appears in the paper",
+        "semantic_key": "normalized_key_for_deduplication",
       }}
     }}
   ],

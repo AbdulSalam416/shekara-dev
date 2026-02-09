@@ -8,6 +8,7 @@ class NodePropertiesSchema(BaseModel):
     importance: str = Field(default="medium", description="Importance level: high, medium, or low")
     context: Optional[str] = Field(default=None, description="Brief context of where this entity appears")
     paperId: Optional[str] = Field(default=None, description="ID of the paper this node came from")
+    semantic_key: Optional[str] = Field(default=None, description="Normalized key for semantic deduplication")
 
 
 class NodeSchema(BaseModel):

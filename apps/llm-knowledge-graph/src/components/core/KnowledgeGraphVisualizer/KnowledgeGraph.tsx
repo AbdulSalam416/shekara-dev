@@ -88,9 +88,9 @@ const KnowledgeGraph = ({
 
   const nodeColors: Record<NodeType, string> = {
     Method: '#3b82f6',
-    Concept: '#8b5cf6',
+    Concept: '#8a5cf6',
     Dataset: '#10b981',
-    Metric: '#f59e0b',
+    Metric: '#be6e63',
     Finding: '#06b6d4',
     ResearchGap: '#ec4899',
     Technology: '#6366f1',

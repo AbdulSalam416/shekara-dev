@@ -134,13 +134,14 @@ export function AppHeader() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
+                <Label htmlFor="email" className="text-right" >
                   Email
                 </Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
+                
                   onChange={(e) => setEmail(e.target.value)}
                   className="col-span-3"
                 />
