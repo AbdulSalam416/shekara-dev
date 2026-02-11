@@ -1,6 +1,8 @@
 import './global.css';
 import '../../../../libs/ui/src/styles/global.css';
 import Providers from '../components/core/Providers';
+import { Analytics } from '@vercel/analytics/next';
+
 
 export const metadata = {
   title: 'LLM Knowledge Graph',
@@ -15,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>{children}
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );

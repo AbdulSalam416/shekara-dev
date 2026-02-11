@@ -2,7 +2,7 @@
 import {NextResponse} from 'next/server';
 import { GraphResponse } from '../../../lib/types';
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const API_URL = '';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({message: 'Invalid request body, "papers" array is required.'}, {status: 400});
     }
 
-    const response = await fetch(`${AI_SERVICE_URL}/api/extract-graphs`, {
+    const response = await fetch(`${API_URL}/api/extract-graphs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

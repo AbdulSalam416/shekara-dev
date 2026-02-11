@@ -73,3 +73,4 @@ cache/
 # Environment variables
 .env.local
 .env
+.vercel
