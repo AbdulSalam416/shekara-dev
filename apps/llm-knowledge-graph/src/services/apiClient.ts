@@ -1,7 +1,7 @@
-import { GraphResponse, KnowledgeGraph, CentralityAnalysis } from '../lib/types';
+import { GraphResponse, KnowledgeGraph } from '../lib/types';
+import { CentralityAnalysis } from './centralityAnalysisService';
 
-// for relative paths to the local Next.js API routes
-const API_BASE_URL = ''; // This will make fetch calls relative to the current origin
+const API_BASE_URL = '';
 
 export async function extractGraph(
   text: string,
