@@ -40,15 +40,18 @@ interface InputViewProps {
   maxUploads?: number;
   onGenerateAction: (papers: Array<{ text: string; id: string; error?: string }>) => Promise<void>;
   isGeneratingResponses: boolean;
+  analysisCount: number; // New prop for analysis count
 }
 
 const activeLLMModel = process.env.NEXT_PUBLIC_LLM_MODEL ?? 'gemini-flash-latest'
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const BETA_LIMIT = 3;
 
 export default function InputView({
                                     maxUploads = 5,
                                     onGenerateAction,
-                                    isGeneratingResponses
+                                    isGeneratingResponses,
+                                    analysisCount // Destructure analysisCount from props
                                   }: InputViewProps) {
   const [inputMode, setInputMode] = useState<'files' | 'text'>('files')
   const [inputText, setInputText] = useState("")
@@ -58,6 +61,9 @@ export default function InputView({
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const isBetaLimitReached = analysisCount >= BETA_LIMIT;
+  const remainingAnalyses = BETA_LIMIT - analysisCount;
 
   const estimateProcessingTime = (fileCount: number) => {
     const secondsPerFile = 15;
@@ -124,8 +130,6 @@ export default function InputView({
         });
       }
     }
-
-    // Clear progress after delay
     setTimeout(() => setUploadProgress({}), 1000);
 
     return newFiles;
@@ -301,6 +305,7 @@ export default function InputView({
 
   const canGenerate = !isUploading &&
     !isGeneratingResponses &&
+    !isBetaLimitReached && // Disable if beta limit is reached
     (uploadedFiles.length > 0 || inputText.trim().length > 0);
 
   return (
@@ -320,6 +325,33 @@ export default function InputView({
           >
             <X className="h-3 w-3" />
           </button>
+        </div>
+      )}
+
+      {/* Beta Limit Messages */}
+      {!isBetaLimitReached ? (
+        <div className="flex items-center gap-2 p-3 bg-secondary/10 border border-secondary/30 rounded-lg text-secondary-foreground text-[11px]">
+          <Zap className="h-4 w-4 flex-shrink-0" />
+          {remainingAnalyses > 0 ? (
+            <p>
+              <b>{remainingAnalyses} graph{remainingAnalyses !== 1 ? 's' : ''} remaining in beta.</b> You’re exploring early, feedback helps shape what comes next.
+            </p>
+          ) : (
+            <p>
+              Want extended access or early features? <a href="#" className="underline font-bold">Join Early Access List</a>
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 p-3 bg-red-100 border border-red-200 rounded-lg text-red-700 text-[11px]">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <p>
+            <b>You’ve reached the beta limit.</b> Thanks for exploring MindGraph AI.
+            <br />
+            Choose how you’d like to continue:
+            <br />• <a href="#" className="underline font-bold">Join early access</a> (get more graphs as features roll out)
+            <br />• <a href="#" className="underline font-bold">Give feedback → unlock 2 more graphs</a>
+          </p>
         </div>
       )}
 

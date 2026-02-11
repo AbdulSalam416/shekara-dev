@@ -20,6 +20,7 @@ interface GraphState {
   graphHistory: GraphHistoryEntry[];
   activeNodeId: string | null;
   isGraphExtractionPending: boolean; // New state variable
+  analysisCount: number; // Beta analysis count
 }
 
 // Define the actions interface
@@ -32,6 +33,7 @@ interface GraphActions {
   renameHistoryEntry: (id: string, newName: string) => void;
   setActiveNode: (nodeId: string | null) => void;
   setIsGraphExtractionPending: (isPending: boolean) => void; // New action
+  incrementAnalysisCount: () => void; // Increment beta analysis count
 }
 
 // Combine state and actions
@@ -46,6 +48,7 @@ export const useGraphStore = create<GraphStore>()(
         graphHistory: [],
         activeNodeId: null,
         isGraphExtractionPending: false, // Initialize to false
+        analysisCount: 0, // Initialize analysis count to 0
 
         setGraph: (graph, centralityAnalysis) =>
           set((state) => {
@@ -106,10 +109,16 @@ export const useGraphStore = create<GraphStore>()(
         setIsGraphExtractionPending: (isPending) =>
           set((state) => {
             state.isGraphExtractionPending = isPending;
-          })}),{
+          }),
+
+        incrementAnalysisCount: () =>
+          set((state) => {
+            state.analysisCount++;
+          }),
+      }),{
         name: 'mindgraph-history-storage', // unique name for localStorage
         storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({ graphHistory: state.graphHistory }), // Only persist graphHistory
+        partialize: (state) => ({ graphHistory: state.graphHistory, analysisCount: state.analysisCount }), // Persist graphHistory and analysisCount
       }))
 )
 

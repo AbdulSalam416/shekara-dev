@@ -10,13 +10,9 @@ import {
 import { useState } from 'react';
 import * as React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shekara-dev/ui';
-import {
-  Network,
-  FileText,
-  History,
-} from 'lucide-react';
+import { Network, FileText, History, MessageCircleCode } from 'lucide-react';
 import InputView from './InputView';
-import NodesView from './NodesView';
+import ChatView from './ChatView';
 import HistoryView from './HistoryView';
 import { CONSTANTS } from '../../../lib/contants';
 import { extractGraphs, fetchCentralityAnalysis } from '../../../services/apiClient';
@@ -24,7 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useGraphStore } from '../../../store/graphStore';
 import { CentralityAnalysis } from '../../../services/centralityAnalysisService';
 
-type viewType = 'Input' | 'Nodes' | 'History';
+type viewType = 'Input' | 'Chat' | 'History';
 
 function MindGraphSidebar() {
   const [currentContentView, setCurrentContentView] =
@@ -34,11 +30,11 @@ function MindGraphSidebar() {
 
   const navItems = [
     { id: 'Input', label: 'Analysis', icon: FileText },
-    // { id: "Nodes", label: "Knowledge", icon: Database },
+    { id: "Chat", label: "Chat", icon: MessageCircleCode },
     { id: 'History', label: 'History', icon: History },
   ] as const;
 
-  const { setGraph, addGraphToHistory, setIsGraphExtractionPending } = useGraphStore();
+  const { setGraph, addGraphToHistory, setIsGraphExtractionPending, analysisCount, incrementAnalysisCount } = useGraphStore();
 
   const graphExtractionMutation = useMutation({
     mutationFn: extractGraphs,
@@ -51,6 +47,7 @@ function MindGraphSidebar() {
 
       setGraph(fetchedGraphData, centralityAnalysis);
       addGraphToHistory(fetchedGraphData, centralityAnalysis);
+      incrementAnalysisCount(); // Increment analysis count on success
       setIsGraphExtractionPending(false); // Set pending state to false on success
     },
     onError: (error: any) => {
@@ -61,6 +58,12 @@ function MindGraphSidebar() {
   });
 
   const loadGraphData = async (papers: Array<{ text: string; id: string; error?: string }>) => {
+    if (analysisCount >= 3) { // Check for beta limit
+      // TODO: Implement a way to show the user they've reached the limit, maybe a toast or a modal
+      console.log("Beta limit reached!");
+      return;
+    }
+
     // Filter out papers with errors before sending to mutation
     const validPapers = papers.filter(p => !p.error);
     if (validPapers.length > 0) {
@@ -75,10 +78,11 @@ function MindGraphSidebar() {
           <InputView
             isGeneratingResponses={graphExtractionMutation.isPending}
             onGenerateAction={loadGraphData}
+            analysisCount={analysisCount} // Pass analysisCount
           />
         );
-      case 'Nodes':
-        return <NodesView />;
+      case 'Chat':
+        return <ChatView />;
       case 'History':
         return <HistoryView />;
     }

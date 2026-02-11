@@ -4,22 +4,17 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import {
   Button,
-  Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle, Input
 } from '@shekara-dev/ui';
 import {
   Trash,
-  Loader2,
   GitGraph,
   Clock,
   Edit,
   Check,
   XCircle,
-  AlertCircle
 } from 'lucide-react';
 import { useGraphStore } from '../../../store/graphStore';
 
@@ -39,8 +34,6 @@ export default function HistoryView() {
     setEditingId(id);
     setEditedName(currentName);
   };
-
-  console.log("currentGraph", currentGraph);
 
   const handleSaveRename = (id: string) => {
     if (editedName.trim() !== '') {

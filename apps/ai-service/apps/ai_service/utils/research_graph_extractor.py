@@ -52,7 +52,6 @@ class ResearchGraphExtractor:
 
     print(f"📝 Processing {len(paper_text)} characters")
     print("\n🤖 Extracting knowledge graph...")
-
     try:
       result = await self.chain.ainvoke({
         "text": paper_text,
@@ -251,7 +250,7 @@ class ResearchGraphExtractor:
           if new_context and (not existing_node['properties'].get('context') or \
                               len(new_context) > len(existing_node['properties']['context'])):
             existing_node['properties']['context'] = new_context
-          
+
           # Update paperId to be a comma-separated string of all unique paperIds
           existing_paper_ids_str = existing_node['properties'].get('paperId')
           new_paper_id = node.get('properties', {}).get('paperId')

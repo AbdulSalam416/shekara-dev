@@ -1,4 +1,4 @@
-KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializing in deep analysis of academic research papers for literature review, synthesis, and knowledge graph construction.
+KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializing in deep analysis of academic research papers for literature review,                                       synthesis, and knowledge graph construction.
 
                                       Your goal is NOT just to summarize the paper, but to extract a structured representation of:
                                       - what the paper assumes
@@ -8,6 +8,8 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
 
                                       TASK:
                                       From the research paper text provided below, extract a high-signal knowledge graph consisting only of entities and relationships that materially contribute to understanding the paper’s intellectual structure and implications.
+                                      Extract 20–30 entities per paper. Prefer fewer entities if the paper is narrow or theoretical.
+
 
                                       ---
 
@@ -56,8 +58,36 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       BASED_ON
                                       OUTPERFORMS
                                       IDENTIFIES_GAP
+                                      ADDRESSES
+                                      LIMITATION_OF
+                                      APPLIES_TO
 
-                                      Only extract relationships that are explicit or strongly supported by the text.
+                                      For each paper, you MUST produce at least 8 relationships.
+                                      If no explicit relationships are stated, infer the most reasonable implicit ones based on standard research conventions.
+                                      Returning zero relationships is invalid output.
+                                      Only extract relationships that are explicit or strongly supported by the text (15-25).
+                                      After generating nodes, perform a relationship audit:
+
+                                      Every Method MUST connect to at least one:
+                                      Concept OR Dataset
+                                      Every Dataset MUST connect to at least one Method
+                                      Every Metric MUST connect to a Method via EVALUATED_WITH or ACHIEVES
+                                      Every ResearchGap MUST connect to either:
+                                      a Method (ADDRESSES / FAILS_TO_ADDRESS)
+                                      or a Concept (LIMITATION_OF)
+                                      If any node is isolated, you MUST add the most plausible relationship.
+
+                                      If no explicit relationship is found, infer from these defaults:
+
+                                      Method → Task → APPLIES_TO
+                                      Method → Concept → BASED_ON
+                                      Method → Dataset → EVALUATED_WITH
+                                      Method → Metric → ACHIEVES
+                                      ResearchGap → Concept → LIMITATION_OF
+                                      New Method → Baseline Method → OUTPERFORMS (if performance is claimed)
+                                      Drop any node that cannot form at least one meaningful relationship to a core Method or Concept.
+                                      Add a post-generation validation step that If fewer than 8 relationships are produced, you MUST infer additional relationships until the minimum is met.
+.
 
                                       ---
 
@@ -80,8 +110,8 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       - concepts are developed without corresponding methods (or vice versa),
                                       - adjacent subfields are ignored.
 
-                                      4. Avoid Generic Entities
-                                      Exclude vague entities unless historically central.
+                                      4. Avoid vague or meaningless abstractions.
+                                      DO NOT avoid field-defining canonical concepts that serve as shared anchors across papers.
 
                                       5. Normalize Carefully
                                       Merge synonymous terms.
@@ -94,46 +124,75 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       Confidence should reflect epistemic certainty, not rhetorical strength.
                                       8. Canonical Awareness (Important)
                                       When extracting entities, prefer names that would be recognizable and reusable across multiple papers in the same subfield, even if the paper uses a more specific phrasing.
-                                      9. Semantic Key Generation (New)
+                                      9. Semantic Key Generation
                                       For each entity, generate a 'semantic_key' that represents the core, normalized concept, independent of specific phrasing or capitalization. This key should allow for deduplication of entities that are semantically identical but might appear with different labels or IDs across various papers. For example, "Deep Learning" and "deep learning algorithms" might both have a semantic_key of "deep_learning". This will help in merging entities across papers in the knowledge graph.
+                                      Semantic Key Enforcement: If an entity corresponds to a well-known field concept (e.g., Transformer, Self-Attention, Attention Mechanism),
+                                    you MUST use the canonical semantic_key used across the literature, even if the paper uses a variant phrasing.
+
+                                    Example:
+                                    - "Scaled Dot-Product Attention" → semantic_key: self_attention
+                                    - "Channel Attention" → semantic_key: attention_mechanism
+                                    - "Mobile Money Transactions → mobile_money
+
+                                    ---
+                                      CANONICAL ANCHOR REQUIREMENT (CRITICAL):
+                                    Exactly one Concept node must be marked as the primary theoretical foundation (importance: high).
+                                    - and reasonably appear in other works in this corpus.
+
+                                    Examples include (but are not limited to):
+                                    - "Attention Mechanism"
+                                    - "Self-Attention"
+                                    - "Transformer Architecture"
+                                    - "Encoder-Decoder Framework"
+                                    - "Sequence Modeling"
+
+                                    These canonical entities MUST:
+                                    - be extracted even if the paper’s main contribution is a specialization,
+                                    - use a normalized, field-standard label,
+                                    - share the SAME semantic_key across papers when applicable.
+
+                                    Then, connect the paper-specific entities to these canonical anchors using BASED_ON or IMPROVES relationships.
 
                                       ---
 
                                       OUTPUT FORMAT:
                                       Return ONLY a valid JSON object with this exact structure:
 
-{{
-  "nodes": [
-    {{
-      "id": "unique_lowercase_underscore_id",
-      "type": "Concept|Method|Dataset|Metric|Finding|Technology|ResearchGap",
-      "label": "Human Readable Display Name",
-      "properties": {{
-        "frequency": 1,
-        "importance": "high|medium|low",
-        "context": "Brief description of where/how this entity appears in the paper",
-        "semantic_key": "normalized_key_for_deduplication",
-      }}
-    }}
-  ],
-  "relationships": [
-    {{
-      "source": "source_node_id",
-      "target": "target_node_id",
-      "type": "USES|IMPROVES|EVALUATED_WITH|ACHIEVES|BASED_ON|OUTPERFORMS|IDENTIFIES_GAP",
-      "properties": {{
-        "confidence": 0.95,
-        "evidence": "Brief quote or paraphrase from the text supporting this relationship"
-      }}
-    }}
-  ]
-}}
-                                      ---
+                                  {{
+                                    "nodes": [
+                                      {{
+                                        "id": "unique_lowercase_underscore_id",
+                                        "type": "Concept|Method|Dataset|Metric|Finding|Technology|ResearchGap",
+                                        "label": "Human Readable Display Name",
+                                        "properties": {{
+                                          "frequency": 1,
+                                          "importance": "high|medium|low",
+                                          "context": "Brief description of where/how this entity appears in the paper",
+                                          "semantic_key": "normalized_key_for_deduplication",
+                                        }}
+                                      }}
+                                    ],
+                                    "relationships": [
+                                      {{
+                                        "source": "source_node_id",
+                                        "target": "target_node_id",
+                                        "type": "USES|IMPROVES|EVALUATED_WITH|ACHIEVES|BASED_ON|OUTPERFORMS|IDENTIFIES_GAP",
+                                        "properties": {{
+                                          "confidence": 0.95,
+                                          "evidence": "Brief quote or paraphrase from the text supporting this relationship"
+                                        }}
+                                      }}
+                                    ]
+                                  }}
+                                                                        ---
                                       IMPORTANT NOTES:
                                       - IDs must be normalized, lowercase, underscore-separated
                                       - Evidence must be grounded in the text
                                       - Do NOT invent citations or claims
                                       - When in doubt, extract fewer but higher-quality entities
+                                      - Each paper MUST include exactly one Concept node representing its primary theoretical foundation.
+                                        This node should almost always be a canonical field-level concept.
+
                                        {format_instructions}
                                       ---
                                       PAPER TEXT TO ANALYZE:
@@ -141,5 +200,5 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       {text}
                                       ---
 
-                                      Extract the knowledge graph now. Return ONLY the JSON object.
+                                    Return JSON with 25-40 nodes and 15-30 relationships. EVERY node must have semantic_key. EVERY relationship must have properties.
 """
