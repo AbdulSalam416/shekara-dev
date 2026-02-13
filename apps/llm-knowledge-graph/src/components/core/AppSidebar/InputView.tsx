@@ -412,7 +412,7 @@ export default function InputView({
                         className={`flex items-center gap-2 px-2 py-1 rounded-md shadow-sm animate-in zoom-in-95 duration-200 ${
                           fileObj.error
                             ? 'bg-destructive/10 border border-destructive/30'
-                            : 'bg-white border border-muted'
+                            : ' border border-muted'
                         }`}
                       >
                         <FileText className={`h-3 w-3 ${fileObj.error ? 'text-destructive' : 'text-primary'}`} />

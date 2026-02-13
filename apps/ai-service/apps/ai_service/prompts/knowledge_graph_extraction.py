@@ -8,7 +8,7 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
 
                                       TASK:
                                       From the research paper text provided below, extract a high-signal knowledge graph consisting only of entities and relationships that materially contribute to understanding the paper’s intellectual structure and implications.
-                                      Extract 20–30 entities per paper. Prefer fewer entities if the paper is narrow or theoretical.
+                                      Extract 20–30 entities per paper.
 
 
                                       ---
@@ -49,7 +49,10 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
 
                                       ---
 
-                                      RELATIONSHIP TYPES TO EXTRACT:
+
+
+                                      RELATIONSHIP EXTRACTION - MANDATORY MINIMUM
+                                        RELATIONSHIP TYPES TO EXTRACT:
 
                                       USES
                                       IMPROVES
@@ -59,36 +62,23 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       OUTPERFORMS
                                       IDENTIFIES_GAP
                                       ADDRESSES
-                                      LIMITATION_OF
-                                      APPLIES_TO
 
-                                      For each paper, you MUST produce at least 8 relationships.
-                                      If no explicit relationships are stated, infer the most reasonable implicit ones based on standard research conventions.
-                                      Returning zero relationships is invalid output.
-                                      Only extract relationships that are explicit or strongly supported by the text (15-25).
-                                      After generating nodes, perform a relationship audit:
+                                      After extracting entities, you MUST connect them.
+                                      Rules:
+                                      - Every Method node MUST have at least 2 outgoing relationships
+                                      - Every Finding node MUST have at least 1 incoming relationship
+                                      - Every Dataset node MUST have at least 1 relationship
+                                      - Every ResearchGap MUST be connected to what IDENTIFIES it
 
-                                      Every Method MUST connect to at least one:
-                                      Concept OR Dataset
-                                      Every Dataset MUST connect to at least one Method
-                                      Every Metric MUST connect to a Method via EVALUATED_WITH or ACHIEVES
-                                      Every ResearchGap MUST connect to either:
-                                      a Method (ADDRESSES / FAILS_TO_ADDRESS)
-                                      or a Concept (LIMITATION_OF)
-                                      If any node is isolated, you MUST add the most plausible relationship.
+                                      BANNED: Extracting a node with zero relationships unless it is a
+                                              standalone Concept with no clear connections.
 
-                                      If no explicit relationship is found, infer from these defaults:
-
-                                      Method → Task → APPLIES_TO
-                                      Method → Concept → BASED_ON
-                                      Method → Dataset → EVALUATED_WITH
-                                      Method → Metric → ACHIEVES
-                                      ResearchGap → Concept → LIMITATION_OF
-                                      New Method → Baseline Method → OUTPERFORMS (if performance is claimed)
-                                      Drop any node that cannot form at least one meaningful relationship to a core Method or Concept.
-                                      Add a post-generation validation step that If fewer than 8 relationships are produced, you MUST infer additional relationships until the minimum is met.
-.
-
+                                      For the paper you just read, go through EVERY method you extracted
+                                      and explicitly ask:
+                                      1. What dataset was it evaluated on? → EVALUATED_WITH
+                                      2. What concept is it based on? → BASED_ON
+                                      3. What finding did it achieve? → ACHIEVES
+                                      4. What prior method does it improve? → IMPROVES
                                       ---
 
                                       ADVANCED EXTRACTION GUIDELINES (CRITICAL):
@@ -156,7 +146,8 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                       ---
 
                                       OUTPUT FORMAT:
-                                      Return ONLY a valid JSON object with this exact structure:
+
+                                  Return ONLY a valid JSON object with this exact structure:
 
                                   {{
                                     "nodes": [
@@ -194,11 +185,16 @@ KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializin
                                         This node should almost always be a canonical field-level concept.
 
                                        {format_instructions}
+
                                       ---
                                       PAPER TEXT TO ANALYZE:
                                       ---
+
                                       {text}
+
                                       ---
 
-                                    Return JSON with 25-40 nodes and 15-30 relationships. EVERY node must have semantic_key. EVERY relationship must have properties.
+                                    Return JSON with 25-40 nodes and 15-30 relationships.
+                                    VERY node must have semantic_key.
+                                    EVERY relationship must have properties.
 """

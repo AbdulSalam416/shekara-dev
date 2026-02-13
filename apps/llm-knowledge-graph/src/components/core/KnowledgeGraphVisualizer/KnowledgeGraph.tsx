@@ -87,7 +87,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
       const [showCentralityMode, setShowCentralityMode] = useState(false);
       const cyRef = useRef<cytoscape.Core | null>(null);
 
-      const { activeNodeId, setActiveNode } = useGraphStore(); // Get activeNodeId and setActiveNode from store
+      const { activeNodeId, setActiveNode } = useGraphStore();
 
   const nodeColors: Record<NodeType, string> = {
     Method: '#3b82f6',
@@ -183,7 +183,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
       });
       gapIds.forEach((id) => connectedToGaps.add(id));
       nodes = nodes.filter((n) => connectedToGaps.has(n.id));
-    } else if (viewMode === 'focus' && activeNodeId) { // Use activeNodeId here
+    } else if (viewMode === 'focus' && activeNodeId) {
       const connectedIds = new Set<string>([activeNodeId]);
       graphData.relationships.forEach((rel) => {
         if (rel.source === activeNodeId) connectedIds.add(rel.target);
@@ -229,7 +229,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
   }, [
     searchQuery,
     viewMode,
-    activeNodeId, // Use activeNodeId here
+    activeNodeId,
     hiddenNodeTypes,
     centralityAnalysis,
     centralityScores,
@@ -281,7 +281,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
         label: 'data(label)',
         'font-size': '8px',
         'text-rotation': 'autorotate',
-        color: '#94a3b8',
+        // color: '#94a3b8',
         'text-outline-color': '#ffffff',
         'text-outline-width': '1px',
         opacity: 0.6,
@@ -344,13 +344,11 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
       cy.on('tap', 'node', (evt) => {
         const node = evt.target;
         const nodeData: Node = node.data();
-        // Set activeNodeId in store
         setActiveNode(nodeData.id);
       });
 
       cy.on('tap', (evt) => {
         if (evt.target === cy) {
-          // Clear activeNodeId in store
           setActiveNode(null);
         }
       });
@@ -375,7 +373,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
             eles: node,
             padding: 100,
           },
-          duration: 300,
+          duration: 200,
         });
 
         // Also update selectedNode if not already set or different
@@ -479,7 +477,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
             </Button>
           )}
 
-          <div className="flex bg-white/90 backdrop-blur p-1 rounded-md shadow-sm border border-muted/60">
+          <div className="flex  backdrop-blur p-1 rounded-md shadow-sm border border-muted/60">
             <Button
               variant="ghost"
               size="icon"
@@ -508,7 +506,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
           <Button
             variant="secondary"
             size="sm"
-            className="bg-white/90 backdrop-blur shadow-sm border-muted/60 h-10"
+            className=" backdrop-blur shadow-sm border-muted/60 h-10"
             onClick={() => cyRef.current?.layout(layout).run()}
           >
             <Activity className="w-4 h-4 mr-2" />
@@ -534,7 +532,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-10 pointer-events-auto">
-        <div className="bg-white/90 backdrop-blur p-3 rounded-xl shadow-sm border border-muted/60 min-w-[140px]">
+        <div className=" backdrop-blur p-3 rounded-xl shadow-sm border border-muted/60 min-w-[140px]">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-1.5">
             <Layers className="w-3 h-3" />
             Knowledge Types
@@ -616,7 +614,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
                     selectedNode.centralityRank <= 10 && (
                       <Badge
                         variant="secondary"
-                        className="mt-1 text-[9px] h-4 px-1.5"
+                        className="mt-1 text-[9px] h-4 px-1.5 ml-1"
                       >
                         <Award className="w-2.5 h-2.5 mr-1" />
                         Rank #{selectedNode.centralityRank}

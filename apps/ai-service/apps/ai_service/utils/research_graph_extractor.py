@@ -14,10 +14,10 @@ class ResearchGraphExtractor:
     print("🔧 Initializing Custom ResearchGraphExtractor...")
 
     self.llm = ChatGoogleGenerativeAI(
-      model="gemini-2.5-flash",
+      model="gemini-flash-latest",
       google_api_key=os.getenv("GEMINI_API_KEY"),
       temperature=0,
-      max_output_tokens=8192,
+      max_output_tokens=16384,
     )
 
     self.parser = JsonOutputParser(pydantic_object=GraphSchema)
@@ -28,7 +28,7 @@ class ResearchGraphExtractor:
 
     self.chain = self.prompt | self.llm | self.parser
 
-    print("✅ Custom extractor initialized")
+    print(f"✅ Custom extractor initialized!" )
 
   async def extract_from_paper(
     self,
@@ -42,13 +42,16 @@ class ResearchGraphExtractor:
     print("=" * 60)
 
     metadata = metadata or {}
+    # CRITICAL: Truncate input to prevent output truncation
+    MAX_CHARS = 40000
 
-    # Limit input
-    # max_chars = 15000  # ~4k tokens
-    # truncated = len(paper_text) > max_chars
-    # if truncated:
-    #   print(f"⚠️  Truncating from {len(paper_text)} to {max_chars} chars")
-    #   paper_text = paper_text[:max_chars]
+    truncated = len(paper_text) > MAX_CHARS
+
+    if len(paper_text) > MAX_CHARS:
+      print(f"⚠️  Truncating from {len(paper_text)} to {MAX_CHARS} chars")
+
+      # Smart truncation: take intro + conclusion, not just first N chars
+      paper_text = self._smart_truncate(paper_text, MAX_CHARS)
 
     print(f"📝 Processing {len(paper_text)} characters")
     print("\n🤖 Extracting knowledge graph...")
@@ -71,7 +74,7 @@ class ResearchGraphExtractor:
         **metadata,
         "extracted_at": datetime.utcnow().isoformat(),
         "paper_length": len(paper_text),
-        # "truncated": truncated,
+        "truncated": truncated,
         "num_papers": 1
       })
 
@@ -117,6 +120,37 @@ class ResearchGraphExtractor:
           "num_papers": 1
         }
       }
+
+  def _smart_truncate(self, text: str, max_chars: int) -> str:
+    """
+    Take first 60% + last 20% of text.
+
+    Why: Academic papers put key concepts in:
+    - Abstract (beginning)
+    - Introduction (beginning)
+    - Related Work (beginning/middle)
+    - Conclusion (end)
+    - Limitations (end)
+
+    The middle (experiments, results tables) has fewer
+    extractable concepts for a knowledge graph.
+    """
+    if len(text) <= max_chars:
+      return text
+
+    first_part_size = int(max_chars * 0.70)
+    last_part_size = int(max_chars * 0.30)
+
+    first_part = text[:first_part_size]
+    last_part = text[-last_part_size:]
+
+    separator = "\n\n[...middle sections truncated for extraction...]\n\n"
+
+    truncated = first_part + separator + last_part
+
+    print(f"   📄 Smart truncated: {first_part_size} chars (front) + {last_part_size} chars (back)")
+
+    return truncated
 
   def _validate_graph(self, graph: Dict[str, Any]) -> None:
     """Validate graph structure matches TypeScript interface."""
@@ -192,6 +226,38 @@ class ResearchGraphExtractor:
     """Merge multiple graphs, incrementing frequency for duplicate nodes,
     and considering nodes with the same semantic_key as the same.
     """
+
+    # ─── DEBUG: Print all semantic keys before merging ───
+    print("\n" + "=" * 60)
+    print("🔍 SEMANTIC KEY AUDIT")
+    print("=" * 60)
+
+    all_semantic_keys = []
+    for i, graph in enumerate(graphs):
+      print(f"\n📄 Paper {i + 1} ({graph.get('metadata', {}).get('paper_id', 'unknown')}):")
+      for node in graph.get('nodes', []):
+        sk = node.get('properties', {}).get('semantic_key', 'MISSING')
+        print(f"   {node['id']:40} → semantic_key: {sk}")
+        all_semantic_keys.append(sk)
+
+    print(f"\n📊 Total semantic_keys: {len(all_semantic_keys)}")
+    print(f"📊 Missing semantic_keys: {all_semantic_keys.count('MISSING')}")
+    print(f"📊 Unique semantic_keys: {len(set(all_semantic_keys))}")
+
+    # Find duplicates
+    from collections import Counter
+    key_counts = Counter(all_semantic_keys)
+    duplicates = {k: v for k, v in key_counts.items() if v > 1}
+
+    if duplicates:
+      print(f"\n✅ Found {len(duplicates)} shared semantic_keys:")
+      for key, count in sorted(duplicates.items(), key=lambda x: -x[1]):
+        print(f"   '{key}' appears {count} times")
+    else:
+      print("\n❌ NO shared semantic_keys found - this is why frequency stays at 1")
+
+    print("=" * 60)
+    # ─── END DEBUG ───
 
     # Stores canonical node (by its original ID, or first encountered ID if semantic key is used)
     node_map = {}  # deduplication_key -> canonical_node
