@@ -4,5 +4,6 @@
     "cytoscape",
     "cytoscapejs",
     "shekara"
-  ]
+  ],
+  "jest.enable": false
 }
