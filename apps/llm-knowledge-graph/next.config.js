@@ -9,9 +9,9 @@ const { composePlugins, withNx } = require('@nx/next');
 const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
-  experimental: {
-    serverComponentsExternalPackages: ["pdf-parse"],
-  },
+
+    serverExternalPackages: ["pdf-parse"],
+  
   webpack: (config, { dev }) => {
     if (dev) {
       // Replace eval-source-map (which causes your bug)

@@ -1,6 +1,14 @@
 packages:
-  - 'apps/*'
-  - 'generalUi'
-  - 'libs/*'
-  - 'apps/llm-knowledge-graph'
-  - 'apps/llm-knowledge-graph-e2e'
+  - apps/*
+  - generalUi
+  - libs/*
+  - apps/llm-knowledge-graph
+  - apps/llm-knowledge-graph-e2e
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - core-js
+  - esbuild
+  - nx
+  - sharp
+  - unrs-resolver
