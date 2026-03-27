@@ -79,7 +79,7 @@ export default function ResearchPage() {
               <Button
                 variant="outline"
                 size="icon"
-                className="absolute bottom-4 right-4 z-20 bg-white/80 backdrop-blur shadow-sm border-muted/60"
+                className="absolute bottom-4 right-4 z-20  backdrop-blur shadow-sm border-muted/60"
                 onClick={() => setIsSplitView(!isSplitView)}
               >
                 {isSplitView ? (
