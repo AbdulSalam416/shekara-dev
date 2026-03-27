@@ -52,7 +52,6 @@ test-output
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
-# Gemini-generated file
 GEMINI.md
 
 # Expo
@@ -74,3 +73,6 @@ cache/
 .env.local
 .env
 .vercel
+
+
+venv/
