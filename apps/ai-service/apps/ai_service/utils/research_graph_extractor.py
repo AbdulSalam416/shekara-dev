@@ -10,6 +10,7 @@ import os
 
 
 class ResearchGraphExtractor:
+  """Extracts knowledge graphs from research papers using Google Gemini."""
   def __init__(self):
     print("🔧 Initializing Custom ResearchGraphExtractor...")
 
