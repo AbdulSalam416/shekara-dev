@@ -406,6 +406,9 @@ importers:
 
   apps/llm-knowledge-graph:
     dependencies:
+      d3-force:
+        specifier: ^3.0.0
+        version: 3.0.0
       next:
         specifier: ~15.2.4
         version: 15.2.9(@babel/core@7.29.0)(@playwright/test@1.58.2)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.98.0)
@@ -418,10 +421,25 @@ importers:
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
+      react-force-graph-2d:
+        specifier: ^1.29.0
+        version: 1.29.1(react@19.0.0)
+      react-force-graph-3d:
+        specifier: ^1.29.1
+        version: 1.29.1(react@19.0.0)
+      three:
+        specifier: ^0.184.0
+        version: 0.184.0
     devDependencies:
+      '@types/d3-force':
+        specifier: ^3.0.10
+        version: 3.0.10
       '@types/pdf-parse':
         specifier: ^1.1.5
         version: 1.1.5
+      '@types/three':
+        specifier: ^0.184.1
+        version: 0.184.1
 
   apps/llm-knowledge-graph-e2e: {}
 
@@ -24616,12 +24634,26 @@ snapshots:
 
   react-fast-compare@3.2.2: {}
 
+  react-force-graph-2d@1.29.1(react@19.0.0):
+    dependencies:
+      force-graph: 1.51.2
+      prop-types: 15.8.1
+      react: 19.0.0
+      react-kapsule: 2.5.7(react@19.0.0)
+
   react-force-graph-2d@1.29.1(react@19.2.4):
     dependencies:
       force-graph: 1.51.2
       prop-types: 15.8.1
       react: 19.2.4
       react-kapsule: 2.5.7(react@19.2.4)
+
+  react-force-graph-3d@1.29.1(react@19.0.0):
+    dependencies:
+      3d-force-graph: 1.80.0
+      prop-types: 15.8.1
+      react: 19.0.0
+      react-kapsule: 2.5.7(react@19.0.0)
 
   react-force-graph-3d@1.29.1(react@19.2.4):
     dependencies:
@@ -24646,6 +24678,11 @@ snapshots:
   react-is@18.3.1: {}
 
   react-is@19.2.4: {}
+
+  react-kapsule@2.5.7(react@19.0.0):
+    dependencies:
+      jerrypick: 1.1.2
+      react: 19.0.0
 
   react-kapsule@2.5.7(react@19.2.4):
     dependencies:
