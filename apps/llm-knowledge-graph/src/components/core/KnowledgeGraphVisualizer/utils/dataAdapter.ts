@@ -1,4 +1,4 @@
-import { KnowledgeGraph, Node } from '../../../lib/types';
+import { KnowledgeGraph, Node } from '../../../../lib/types';
 import { ForceGraphData, ForceGraphLink, ForceGraphNode } from '../types';
 
 /**

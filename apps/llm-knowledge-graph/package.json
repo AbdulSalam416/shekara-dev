@@ -7,9 +7,15 @@
     "next": "~15.2.4",
     "pdf-parse": "^2.4.5",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "d3-force": "^3.0.0",
+    "react-force-graph-2d": "^1.29.0",
+    "react-force-graph-3d": "^1.29.1",
+    "three": "^0.184.0"
   },
   "devDependencies": {
-    "@types/pdf-parse": "^1.1.5"
+    "@types/pdf-parse": "^1.1.5",
+    "@types/d3-force": "^3.0.10",
+    "@types/three": "^0.184.1"
   }
 }
