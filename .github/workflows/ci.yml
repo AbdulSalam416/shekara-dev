@@ -36,6 +36,15 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install
+
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps
       - uses: nrwl/nx-set-shas@v4

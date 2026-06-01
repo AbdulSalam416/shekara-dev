@@ -15,3 +15,4 @@ export * from './components/ui/tooltip';
 export * from './components/ui/sheet';
 export * from './components/ui/label';
 export * from './components/ui/dialog';
+export * from './components/utils';

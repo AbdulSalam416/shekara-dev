@@ -21,10 +21,12 @@
       }
     ],
     //
-    "types": ["jest", "node"],
+    "types": ["jest", "node", "react"],
     "skipLibCheck": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node"
   },
   "include": [
     "../apps/llm-knowledge-graph/.next/types/**/*.ts",

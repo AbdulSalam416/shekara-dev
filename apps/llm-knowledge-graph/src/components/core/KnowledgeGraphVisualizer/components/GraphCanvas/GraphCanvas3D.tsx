@@ -80,8 +80,7 @@ export function GraphCanvas3D({
       fg.d3ReheatSimulation();
     }, ANIMATION_CONFIG.initDelay);
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Glow ring pulsing animation
   const needsAnimation = hasGlowNodes(data.nodes);

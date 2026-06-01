@@ -57,7 +57,7 @@ export function GraphCanvas({
           const node = data.nodes.find((n) => n.id === nodeId) ?? { id: nodeId, name: nodeId, type: '', properties: {} };
           onNodeClick(node as ForceGraphNode);
         }}
-        onBackgroundClick={onBackgroundClick ?? (() => {})}
+        onBackgroundClick={onBackgroundClick ?? (() => { /* noop */ })}
         graphRef={graphRef!}
       />
     );
@@ -75,12 +75,11 @@ export function GraphCanvas({
         onBackgroundClick={onBackgroundClick}
         isDark={isDark}
         nodeStyleOverrides={nodeStyleOverrides}
-        graphRef={graphRef}
+        graphRef={graphRef!}
       />
     );
   }
 
-  // Default: force-2d
   return (
     <GraphCanvas2D
       data={data}
@@ -92,7 +91,7 @@ export function GraphCanvas({
       onBackgroundClick={onBackgroundClick}
       isDark={isDark}
       nodeStyleOverrides={nodeStyleOverrides}
-      graphRef={graphRef}
+      graphRef={graphRef!}
     />
   );
 }
