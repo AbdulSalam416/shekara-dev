@@ -1,4 +1,4 @@
-KNOWLEDGE_GRAPH_EXTRACTION_PROMPT ="""You are an expert AI assistant specializing in deep analysis of academic research papers for literature review,                                       synthesis, and knowledge graph construction.
+KNOWLEDGE_GRAPH_EXTRACTION_PROMPT = """You are an expert AI assistant specializing in deep analysis of academic research papers for literature review,                                       synthesis, and knowledge graph construction.
 
                                       Your goal is NOT just to summarize the paper, but to extract a structured representation of:
                                       - what the paper assumes

@@ -11,11 +11,16 @@
     "d3-force": "^3.0.0",
     "react-force-graph-2d": "^1.29.0",
     "react-force-graph-3d": "^1.29.1",
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "cytoscape": "^3.33.1",
+    "cytoscape-cola": "^2.5.1",
+    "react-cytoscapejs": "^2.0.0"
   },
   "devDependencies": {
     "@types/pdf-parse": "^1.1.5",
     "@types/d3-force": "^3.0.10",
-    "@types/three": "^0.184.1"
+    "@types/three": "^0.184.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0"
   }
 }

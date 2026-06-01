@@ -1,8 +1,7 @@
 'use client'
 
 
-import { SidebarInset, useSidebar } from '@shekara-dev/ui';
-import { cn } from '../../../../../libs/ui/src/components/utils';
+import { SidebarInset, useSidebar, cn } from '@shekara-dev/ui';
 import MindGraphSidebar from './AppSidebar';
 import { AppHeader } from './AppHeader';
 

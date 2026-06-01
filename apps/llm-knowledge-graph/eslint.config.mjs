@@ -2,19 +2,32 @@ import { FlatCompat } from '@eslint/eslintrc';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import js from '@eslint/js';
-import { fixupConfigRules } from '@eslint/compat';
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mjs';
+import reactHooks from 'eslint-plugin-react-hooks';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
+  baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
 });
 
 export default [
-  ...fixupConfigRules(compat.extends('next')),
-  ...fixupConfigRules(compat.extends('next/core-web-vitals')),
   ...baseConfig,
   ...nx.configs['flat/react-typescript'],
+  {
+    plugins: {
+      'react-hooks': reactHooks,
+    },
+    rules: reactHooks.configs.recommended.rules,
+  },
+  // Instead of extending 'next' which causes circular errors,
+  // we use compat.config to wrap the next plugins/rules
+  ...compat.config({
+    extends: ['plugin:@next/next/recommended', 'plugin:@next/next/core-web-vitals'],
+  }),
   {
     ignores: ['.next/**/*'],
   },

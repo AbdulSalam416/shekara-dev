@@ -1,8 +1,6 @@
+import React from 'react';
 import './global.css';
-import '../../../../libs/ui/src/styles/global.css';
 import Providers from '../components/core/Providers';
-import { Analytics } from '@vercel/analytics/next';
-
 
 export const metadata = {
   title: 'LLM Knowledge Graph',

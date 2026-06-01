@@ -1,6 +1,6 @@
 """Hello unit test module."""
 
-from apps/ai_service.hello import hello
+from apps.ai_service.hello import hello
 
 
 def test_hello():

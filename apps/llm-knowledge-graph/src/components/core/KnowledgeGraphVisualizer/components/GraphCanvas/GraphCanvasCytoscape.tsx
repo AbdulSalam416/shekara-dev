@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef } from 'react';
-// @ts-ignore
+// @ts-expect-error react-cytoscapejs does not have types
 import CytoscapeComponent from 'react-cytoscapejs';
 import Cytoscape from 'cytoscape';
-// @ts-ignore
+// @ts-expect-error cytoscape-cola does not have types
 import cola from 'cytoscape-cola';
 import { ForceGraphData, ForceGraphNode } from '../../types';
 import { NODE_COLORS } from '../../config/colors';
 import type { NodeStyleOverride } from './GraphCanvas2D';
 
 if (typeof window !== 'undefined') {
-  Cytoscape.use(cola);
+  Cytoscape.use(cola); // eslint-disable-line react-hooks/rules-of-hooks
 }
 
 // Cola layout — same config as the original implementation
@@ -190,8 +190,7 @@ export function GraphCanvasCytoscape({
       },
     ],
     // Stylesheet itself is stable — overridesRef updates the functions in place
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   // Wire up Cytoscape event handlers on mount

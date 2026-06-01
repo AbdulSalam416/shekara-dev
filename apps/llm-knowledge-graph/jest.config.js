@@ -11,6 +11,7 @@ const config = {
     '^(?!.*\\.\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   coverageDirectory: '../coverage/llm-knowledge-graph',
   testEnvironment: 'jsdom',
 };
