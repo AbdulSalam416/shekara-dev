@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.venv/
+apps/ai-service/.venv/
+apps/ai-service/dist/
+apps/ai-service/.pytest_cache/
+apps/ai-service/.coverage
+dist/
+coverage/
+reports/
+.nx/
+.idea/
+.vscode/
+.git/
+.DS_Store
+*.log
