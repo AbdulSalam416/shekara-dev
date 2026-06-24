@@ -63,7 +63,7 @@ export async function fetchCentralityAnalysis(
 
 export async function checkHealth(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/health`); // Assuming a local /api/health endpoint
+    const response = await fetch(`${API_BASE_URL}/api/health`); 
     const data = await response.json();
     return data.status === 'healthy';
   } catch {
