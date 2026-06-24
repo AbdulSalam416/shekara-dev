@@ -1,0 +1,11 @@
+services:
+  ai-service:
+    build:
+      context: ./apps/ai-service
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PORT=8000
+    restart: unless-stopped
