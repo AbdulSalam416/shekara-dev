@@ -30,7 +30,7 @@ function MindGraphSidebar() {
 
   const navItems = [
     { id: 'Input', label: 'Analysis', icon: FileText },
-    { id: "Chat", label: "Chat", icon: MessageCircleCode },
+    // { id: "Chat", label: "Chat", icon: MessageCircleCode },
     { id: 'History', label: 'History', icon: History },
   ] as const;
 

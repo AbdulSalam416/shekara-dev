@@ -22,6 +22,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({papers}),
     });
 
+
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error from AI service:", errorData);

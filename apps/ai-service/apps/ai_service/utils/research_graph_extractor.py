@@ -118,18 +118,7 @@ class ResearchGraphExtractor:
             import traceback
 
             traceback.print_exc()
-
-            # Return empty graph with error info
-            return {
-                "nodes": [],
-                "relationships": [],
-                "metadata": {
-                    **metadata,
-                    "error": str(e),
-                    "extracted_at": datetime.utcnow().isoformat(),
-                    "num_papers": 1,
-                },
-            }
+            raise e
 
     def _smart_truncate(self, text: str, max_chars: int) -> str:
         """
