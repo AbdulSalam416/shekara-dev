@@ -59,6 +59,7 @@ export default function InputView({
   const [isDragging, setIsDragging] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
   const [error, setError] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
 
@@ -212,6 +213,7 @@ export default function InputView({
   };
 
   const handleGenerate = async () => {
+    setIsProcessing(true);
     setError(null);
     const papers: Array<{ text: string; id: string; error?: string }> = [];
 
@@ -293,6 +295,8 @@ export default function InputView({
       console.error('Generation failed:', error);
       // Global error store (via AppSidebar mutation) handles API errors.
       // We preserve the uploaded files and input text so the user can easily retry.
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -303,6 +307,7 @@ export default function InputView({
 
   const canGenerate = !isUploading &&
     !isGeneratingResponses &&
+    !isProcessing &&
     (uploadedFiles.length > 0 || inputText.trim().length > 0);
 
   return (
@@ -391,7 +396,8 @@ export default function InputView({
                         </span>
                         <button
                           onClick={() => removeFile(fileObj.id)}
-                          className="text-muted-foreground hover:text-destructive transition-colors"
+                          disabled={isProcessing || isGeneratingResponses}
+                          className="text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50 disabled:pointer-events-none"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -445,7 +451,7 @@ export default function InputView({
                           size="icon"
                           className="h-8 w-8 rounded-full hover:bg-white hover:shadow-sm"
                           onClick={() => fileInputRef.current?.click()}
-                          disabled={isUploading || uploadedFiles.length >= maxUploads}
+                          disabled={isUploading || isProcessing || isGeneratingResponses || uploadedFiles.length >= maxUploads}
                         >
                           {isUploading ? (
                             <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -472,7 +478,7 @@ export default function InputView({
                   disabled={!canGenerate}
                   className="h-8 px-4 bg-primary hover:bg-primary/90 text-xs font-bold rounded-full shadow-lg shadow-primary/20 transition-all active:scale-95"
                 >
-                  {isGeneratingResponses ? (
+                  {isGeneratingResponses || isProcessing ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" />
                   ) : (
                     <Play className="h-3.5 w-3.5 mr-2 fill-current" />
@@ -490,7 +496,8 @@ export default function InputView({
                 placeholder="Paste research abstract, paper text, or describe your research goal..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                className="w-full resize-none bg-transparent border-none focus-visible:ring-0 p-4 text-sm leading-relaxed min-h-[200px]"
+                disabled={isProcessing || isGeneratingResponses}
+                className="w-full resize-none bg-transparent border-none focus-visible:ring-0 p-4 text-sm leading-relaxed min-h-[200px] disabled:opacity-50"
               />
 
               <div className="flex flex-col sm:flex-row items-center justify-between p-2 bg-muted/20 rounded-b-xl border-t border-muted/30">
@@ -498,6 +505,7 @@ export default function InputView({
                   variant="ghost"
                   size="sm"
                   onClick={loadSampleData}
+                  disabled={isProcessing || isGeneratingResponses}
                   className="text-[10px] h-7 text-center"
                 >
                   <Zap className="h-3 w-3 mr-1" />
@@ -516,7 +524,7 @@ export default function InputView({
                     disabled={!canGenerate}
                     className="h-8 px-4 bg-primary hover:bg-primary/90 text-xs font-bold rounded-full shadow-lg shadow-primary/20 transition-all active:scale-95"
                   >
-                    {isGeneratingResponses ? (
+                    {isGeneratingResponses || isProcessing ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" />
                     ) : (
                       <Play className="h-3.5 w-3.5 mr-2 fill-current" />
