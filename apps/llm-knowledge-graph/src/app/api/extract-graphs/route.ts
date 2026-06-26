@@ -24,9 +24,15 @@ export async function POST(request: Request) {
 
 
     if (!response.ok) {
-      const errorData = await response.json();
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = null;
+      }
       console.error("Error from AI service:", errorData);
-      return NextResponse.json({message: errorData.detail || 'An error occurred with the AI service.'}, {status: response.status});
+      const message = errorData?.error?.message || errorData?.detail || errorData?.message || 'An error occurred with the AI service.';
+      return NextResponse.json({message}, {status: response.status});
     }
 
     const data: GraphResponse = await response.json();

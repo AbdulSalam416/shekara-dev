@@ -34,12 +34,13 @@ function MindGraphSidebar() {
     { id: 'History', label: 'History', icon: History },
   ] as const;
 
-  const { setGraph, addGraphToHistory, setIsGraphExtractionPending, analysisCount, incrementAnalysisCount } = useGraphStore();
+  const { setGraph, addGraphToHistory, setIsGraphExtractionPending, analysisCount, incrementAnalysisCount, setExtractionError } = useGraphStore();
 
   const graphExtractionMutation = useMutation({
     mutationFn: extractGraphs,
     onMutate: () => {
       setIsGraphExtractionPending(true); // Set pending state to true when mutation starts
+      setExtractionError(null); // Clear previous errors
     },
     onSuccess: async (data) => {
       const fetchedGraphData = data.graph;
@@ -53,17 +54,11 @@ function MindGraphSidebar() {
     onError: (error: any) => {
       console.error('Graph extraction failed:', error);
       setIsGraphExtractionPending(false); // Set pending state to false on error
-      // TODO: Implement a global error state to display to the user
+      setExtractionError(error.message || 'Extraction failed'); // Set global error state
     },
   });
 
   const loadGraphData = async (papers: Array<{ text: string; id: string; error?: string }>) => {
-    if (analysisCount >= 3) { // Check for beta limit
-      // TODO: Implement a way to show the user they've reached the limit, maybe a toast or a modal
-      console.log("Beta limit reached!");
-      return;
-    }
-
     // Filter out papers with errors before sending to mutation
     const validPapers = papers.filter(p => !p.error);
     if (validPapers.length > 0) {
@@ -94,7 +89,7 @@ function MindGraphSidebar() {
       variant="floating"
       className="border-r bg-sidebar"
     >
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
             <Network className="h-5 w-5" />
@@ -110,6 +105,11 @@ function MindGraphSidebar() {
             </div>
           )}
         </div>
+        {!isCollapsed && (
+          <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+            Extracts, visualizes, and analyzes semantic knowledge graphs from research papers to identify core patterns, central concepts, and key influencers.
+          </p>
+        )}
       </SidebarHeader>
 
       <SidebarContent className="px-2">

@@ -17,7 +17,7 @@ export async function extractGraph(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail?.message || 'Extraction failed');
+    throw new Error(error.message || error.detail?.message || 'Extraction failed');
   }
 
   return response.json();
@@ -36,7 +36,7 @@ export async function extractGraphs(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail?.message || 'Extraction failed');
+    throw new Error(error.message || error.detail?.message || 'Extraction failed');
   }
 
   return response.json();

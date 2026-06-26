@@ -21,6 +21,7 @@ interface GraphState {
   activeNodeId: string | null;
   isGraphExtractionPending: boolean; // New state variable
   analysisCount: number; // Beta analysis count
+  extractionError: string | null; // Global extraction error message
 }
 
 // Define the actions interface
@@ -34,6 +35,7 @@ interface GraphActions {
   setActiveNode: (nodeId: string | null) => void;
   setIsGraphExtractionPending: (isPending: boolean) => void; // New action
   incrementAnalysisCount: () => void; // Increment beta analysis count
+  setExtractionError: (error: string | null) => void; // Set global extraction error
 }
 
 // Combine state and actions
@@ -49,6 +51,7 @@ export const useGraphStore = create<GraphStore>()(
         activeNodeId: null,
         isGraphExtractionPending: false, // Initialize to false
         analysisCount: 0, // Initialize analysis count to 0
+        extractionError: null, // Initialize to null
 
         setGraph: (graph, centralityAnalysis) =>
           set((state) => {
@@ -56,6 +59,7 @@ export const useGraphStore = create<GraphStore>()(
             state.currentCentralityAnalysis = centralityAnalysis;
             state.activeNodeId = null;
             state.isGraphExtractionPending = false; // Set to false when graph is set
+            state.extractionError = null; // Clear error on new graph
           }),
 
         addGraphToHistory: (graph, centralityAnalysis, name) =>
@@ -80,6 +84,7 @@ export const useGraphStore = create<GraphStore>()(
               state.currentGraph = entry.graph;
               state.currentCentralityAnalysis = entry.centralityAnalysis;
               state.activeNodeId = null;
+              state.extractionError = null; // Clear error when loading historical graph
             }
           }),
 
@@ -114,6 +119,11 @@ export const useGraphStore = create<GraphStore>()(
         incrementAnalysisCount: () =>
           set((state) => {
             state.analysisCount++;
+          }),
+
+        setExtractionError: (error) =>
+          set((state) => {
+            state.extractionError = error;
           }),
       }),{
         name: 'mindgraph-history-storage', // unique name for localStorage

@@ -17,10 +17,11 @@ class ResearchGraphExtractor:
         print("🔧 Initializing Custom ResearchGraphExtractor...")
 
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-flash-latest",
+            model="gemini-2.5-flash",
             google_api_key=os.getenv("GEMINI_API_KEY"),
             temperature=0,
             max_output_tokens=16384,
+            response_mime_type="application/json",
         )
 
         self.parser = JsonOutputParser(pydantic_object=GraphSchema)
@@ -56,6 +57,7 @@ class ResearchGraphExtractor:
 
         print(f"📝 Processing {len(paper_text)} characters")
         print("\n🤖 Extracting knowledge graph...")
+        
         try:
             result = await self.chain.ainvoke(
                 {
@@ -63,62 +65,61 @@ class ResearchGraphExtractor:
                     "format_instructions": self.parser.get_format_instructions(),
                 }
             )
-
-            print("✅ Extraction complete")
-            print(f"📊 Nodes: {len(result.get('nodes', []))}")
-            print(f"📊 Relationships: {len(result.get('relationships', []))}")
-
-            # Ensure metadata structure matches schema
-            if "metadata" not in result:
-                result["metadata"] = {}
-
-            # Merge provided metadata with extraction metadata
-            result["metadata"].update(
-                {
-                    **metadata,
-                    "extracted_at": datetime.utcnow().isoformat(),
-                    "paper_length": len(paper_text),
-                    "truncated": truncated,
-                    "num_papers": 1,
-                }
-            )
-
-            # Add paperId to all nodes if provided
-            paper_id = metadata.get("paper_id")
-            if paper_id:
-                for node in result.get("nodes", []):
-                    if "properties" not in node:
-                        node["properties"] = {}
-                    node["properties"]["paperId"] = paper_id
-
-            # Show samples
-            if result.get("nodes"):
-                print("\n  Sample Nodes:")
-                for node in result["nodes"][:3]:
-                    importance = node.get("properties", {}).get("importance", "N/A")
-                    print(
-                        f"    - [{node['type']}] {node['label']} (importance: {importance})"
-                    )
-
-            if result.get("relationships"):
-                print("\n  Sample Relationships:")
-                for rel in result["relationships"][:3]:
-                    confidence = rel.get("properties", {}).get("confidence", "N/A")
-                    print(
-                        f"    - {rel['source']} --[{rel['type']}]--> {rel['target']} (conf: {confidence})"
-                    )
-
-            # Validate structure
-            self._validate_graph(result)
-
-            return result
-
         except Exception as e:
             print(f"❌ ERROR: {type(e).__name__}: {str(e)}")
             import traceback
 
             traceback.print_exc()
             raise e
+
+        print("✅ Extraction complete")
+        print(f"📊 Nodes: {len(result.get('nodes', []))}")
+        print(f"📊 Relationships: {len(result.get('relationships', []))}")
+
+        # Ensure metadata structure matches schema
+        if "metadata" not in result:
+            result["metadata"] = {}
+
+        # Merge provided metadata with extraction metadata
+        result["metadata"].update(
+            {
+                **metadata,
+                "extracted_at": datetime.utcnow().isoformat(),
+                "paper_length": len(paper_text),
+                "truncated": truncated,
+                "num_papers": 1,
+            }
+        )
+
+        # Add paperId to all nodes if provided
+        paper_id = metadata.get("paper_id")
+        if paper_id:
+            for node in result.get("nodes", []):
+                if "properties" not in node:
+                    node["properties"] = {}
+                node["properties"]["paperId"] = paper_id
+
+        # Show samples
+        if result.get("nodes"):
+            print("\n  Sample Nodes:")
+            for node in result["nodes"][:3]:
+                importance = node.get("properties", {}).get("importance", "N/A")
+                print(
+                    f"    - [{node['type']}] {node['label']} (importance: {importance})"
+                )
+
+        if result.get("relationships"):
+            print("\n  Sample Relationships:")
+            for rel in result["relationships"][:3]:
+                confidence = rel.get("properties", {}).get("confidence", "N/A")
+                print(
+                    f"    - {rel['source']} --[{rel['type']}]--> {rel['target']} (conf: {confidence})"
+                )
+
+        # Validate structure
+        self._validate_graph(result)
+
+        return result
 
     def _smart_truncate(self, text: str, max_chars: int) -> str:
         """
@@ -211,12 +212,17 @@ class ResearchGraphExtractor:
 
         print(f"\n🔄 Extracting from {len(papers)} papers...")
 
-        # Extract in parallel
+        # Extract in parallel with concurrency limit (e.g. max 2 at a time) to prevent 503/429 spikes
         import asyncio
+        semaphore = asyncio.Semaphore(2)
+
+        async def extract_with_semaphore(paper, metadata):
+            async with semaphore:
+                return await self.extract_from_paper(paper["text"], metadata)
 
         tasks = [
-            self.extract_from_paper(
-                paper["text"], {"paper_id": paper.get("id", f"paper_{i}")}
+            extract_with_semaphore(
+                paper, {"paper_id": paper.get("id", f"paper_{i}")}
             )
             for i, paper in enumerate(papers)
         ]

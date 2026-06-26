@@ -9,12 +9,13 @@ import {
   TabsContent,
   Button,
 } from '@shekara-dev/ui';
-import { Network, SearchCode, Maximize2, Minimize2, Loader2, AlertCircle, GitGraph } from 'lucide-react';
+import { Network, SearchCode, Maximize2, Minimize2, Loader2, AlertCircle, GitGraph, AlertTriangle, ExternalLink } from 'lucide-react';
 import { CentralityAnalysis } from '../services/centralityAnalysisService';
 import KnowledgeGraph, { KnowledgeGraphRef } from '../components/core/KnowledgeGraphVisualizer/KnowledgeGraph'; // Import KnowledgeGraphRef
 import KeyInfluencerAnalysis from '../components/KeyInfluencerAnalysis';
 import { KnowledgeGraph as GraphType } from '../lib/types';
 import { useGraphStore } from '../store/graphStore';
+import { parseFriendlyError } from '../lib/errorParser';
 
 
 export default function ResearchPage() {
@@ -22,7 +23,7 @@ export default function ResearchPage() {
   const knowledgeGraphRef = useRef<KnowledgeGraphRef>(null); // Ref for KnowledgeGraph
   const [graphImage, setGraphImage] = useState<string | null>(null); // State to store graph screenshot
 
-  const { currentGraph, currentCentralityAnalysis, isGraphExtractionPending } = useGraphStore();
+  const { currentGraph, currentCentralityAnalysis, isGraphExtractionPending, extractionError, setExtractionError } = useGraphStore();
 
   const generateGraphScreenshot = useCallback(async () => {
     if (knowledgeGraphRef.current) {
@@ -32,6 +33,69 @@ export default function ResearchPage() {
     }
     return null;
   }, []);
+
+  if (extractionError) {
+    const friendly = parseFriendlyError(extractionError);
+    return (
+      <MindGraphResearchLayout generateGraphScreenshot={generateGraphScreenshot} graphImage={graphImage}>
+        <div className="flex flex-col h-full items-center justify-center p-6 bg-background">
+          <div className="w-full max-w-xl p-6 bg-card border border-destructive/20 rounded-xl shadow-lg shadow-destructive/5 animate-in fade-in duration-300">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-destructive/10 rounded-xl text-destructive flex-shrink-0 animate-bounce">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">{friendly.title}</h2>
+                  <p className="text-xs text-muted-foreground mt-1">Error type: {friendly.type.replace('_', ' ').toUpperCase()}</p>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {friendly.message}
+                </p>
+                
+
+                {friendly.link && (
+                  <div className="pt-1">
+                    <a
+                      href={friendly.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-semibold"
+                    >
+                      Learn more about Gemini API quotas <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
+                
+                {friendly.originalError && (
+                  <div className="mt-4 pt-3 border-t border-muted">
+                    <details className="group cursor-pointer">
+                      <summary className="text-xs text-muted-foreground hover:text-foreground font-semibold flex items-center justify-between">
+                        <span>Show raw technical details</span>
+                        <span className="transition-transform group-open:rotate-180 font-mono text-[10px]">&#9662;</span>
+                      </summary>
+                      <pre className="mt-2 p-3 bg-black/5 dark:bg-black/40 border border-muted/50 rounded-lg text-[10px] font-mono whitespace-pre-wrap max-h-40 overflow-y-auto leading-normal">
+                        {friendly.originalError}
+                      </pre>
+                    </details>
+                  </div>
+                )}
+
+                <div className="pt-3 flex gap-3">
+                  <Button
+                    onClick={() => setExtractionError(null)}
+                    className="w-full sm:w-auto"
+                  >
+                    Clear Error & Retry
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </MindGraphResearchLayout>
+    );
+  }
 
   if (isGraphExtractionPending) {
     return (
