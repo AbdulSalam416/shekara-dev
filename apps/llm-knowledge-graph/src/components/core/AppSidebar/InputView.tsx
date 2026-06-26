@@ -43,7 +43,7 @@ interface InputViewProps {
   analysisCount: number; // New prop for analysis count
 }
 
-const activeLLMModel = process.env.NEXT_PUBLIC_LLM_MODEL ?? 'gemini-flash-latest'
+const activeLLMModel = process.env.NEXT_PUBLIC_LLM_MODEL ?? 'gemini-2.5-flash'; // Default to Gemini 2.5 Flash if not set
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function InputView({
