@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import * as React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shekara-dev/ui';
-import { Network, FileText, History, MessageCircleCode } from 'lucide-react';
+import {  FileText, History, } from 'lucide-react';
 import InputView from './InputView';
 import ChatView from './ChatView';
 import HistoryView from './HistoryView';
@@ -19,6 +19,7 @@ import { extractGraphs, fetchCentralityAnalysis } from '../../../services/apiCli
 import { useMutation } from '@tanstack/react-query';
 import { useGraphStore } from '../../../store/graphStore';
 import { CentralityAnalysis } from '../../../services/centralityAnalysisService';
+import Image from 'next/image';
 
 type viewType = 'Input' | 'Chat' | 'History';
 
@@ -91,9 +92,7 @@ function MindGraphSidebar() {
     >
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-            <Network className="h-5 w-5" />
-          </div>
+          <Image src="/logo.png" alt="Logo" className="text-primary-foreground"  height={36} width={36}/>
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden">
               <span className="font-bold text-base leading-none truncate">

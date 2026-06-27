@@ -25,7 +25,7 @@ import {
 import { useGraphStore } from '../../store/graphStore'; // Import useGraphStore
 import { ThemeToggle } from './ThemeToggle';
 import { ExportDialog } from './ExportDialog'; // Import ThemeToggle
-
+import Image from 'next/image';
 
 export function AppHeader({ generateGraphScreenshot, graphImage }: {
   generateGraphScreenshot: () => Promise<string | null>;
@@ -56,7 +56,7 @@ export function AppHeader({ generateGraphScreenshot, graphImage }: {
             {(isSidebarCollapsed || isMobile) && (
               <div className="flex items-center gap-2 mr-2">
                 <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Network className="h-5 w-5 text-primary-foreground" />
+                  <Image src="/logo.png" alt="Logo" className="text-primary-foreground"  height={20} width={20}/>
                 </div>
                 <h1 className="text-lg font-bold hidden sm:block">MindGraph AI</h1>
               </div>
