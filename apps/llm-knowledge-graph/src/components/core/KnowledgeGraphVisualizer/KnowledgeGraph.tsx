@@ -48,6 +48,7 @@ import { useDimensions } from './hooks/useDimensions';
 import { useNodeSelection } from './hooks/useNodeSelection';
 import { GraphCanvas, GraphRenderer } from './components/GraphCanvas';
 import type { NodeStyleOverride } from './components/GraphCanvas';
+import { useTheme } from 'next-themes';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,8 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
     const [showCentralityMode, setShowCentralityMode] = useState(false);
     const [showLabels, setShowLabels] = useState(true);
     const [renderer, setRenderer] = useState<GraphRenderer>('force-2d');
+    const { resolvedTheme } = useTheme(); 
+    const isDark = resolvedTheme === 'dark';
 
     // ── Refs ──────────────────────────────────────────────────────────────
     const containerRef = useRef<HTMLDivElement>(null);
@@ -311,7 +314,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
           <div className="flex gap-2 pointer-events-auto flex-wrap">
 
             {/* ── Renderer toggle ──────────────────────────────────── */}
-            <div className="flex backdrop-blur rounded-md shadow-sm border border-muted/60 overflow-hidden">
+            <div className="flex backdrop-blur rounded-md shadow-sm border border-muted/60 overflow-hidden  dark:hover:text-white">
               {RENDERER_OPTIONS.map((opt) => (
                 <Button
                   key={opt.value}
@@ -479,10 +482,10 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
                     <Info className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-slate-900 text-sm leading-tight">
+                    <h2 className="font-bold  text-sm leading-tight">
                       {selectedNodeInfo.label}
                     </h2>
-                    <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-medium uppercase tracking-wider">
                       {selectedNodeInfo.type}
                     </span>
                     {selectedNodeInfo.centralityRank &&
@@ -499,7 +502,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
                 </div>
                 <button
                   onClick={() => setActiveNode(null)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                  className="transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -507,29 +510,29 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
 
               {/* Properties */}
               {selectedNodeInfo.properties.frequency && (
-                <p className="text-[10px] text-slate-500 mb-1">
+                <p className="text-[10px] mb-1">
                   Frequency:{' '}
                   <span className="font-semibold">{selectedNodeInfo.properties.frequency}</span>
                 </p>
               )}
               {selectedNodeInfo.properties.importance && (
-                <p className="text-[10px] text-slate-500 mb-1 capitalize">
+                <p className="text-[10px] mb-1 capitalize">
                   Importance:{' '}
                   <span className="font-semibold">{selectedNodeInfo.properties.importance}</span>
                 </p>
               )}
               {selectedNodeInfo.properties.context && (
                 <div className="mt-2 mb-4">
-                  <p className="text-[9px] text-slate-400 uppercase font-bold mb-1">Context</p>
-                  <p className="text-[11px] text-slate-700 leading-relaxed">
+                  <p className="text-[9px] uppercase font-bold mb-1">Context</p>
+                  <p className="text-[11px]  leading-relaxed">
                     {selectedNodeInfo.properties.context}
                   </p>
                 </div>
               )}
               {selectedNodeInfo.properties.paperId && (
                 <div className="mt-2 mb-4">
-                  <p className="text-[9px] text-slate-400 uppercase font-bold mb-1">Source</p>
-                  <p className="text-[11px] text-slate-700 leading-relaxed">
+                  <p className="text-[9px]  uppercase font-bold mb-1">Source</p>
+                  <p className="text-[11px]  leading-relaxed">
                     {selectedNodeInfo.properties.paperId}
                   </p>
                 </div>
@@ -546,16 +549,16 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
                   <div className="grid grid-cols-2 gap-2">
                     {selectedNodeInfo.degreeCentrality !== undefined && (
                       <div>
-                        <div className="text-[9px] text-slate-500">Connections</div>
-                        <div className="text-sm font-bold text-slate-900">
+                        <div className="text-[9px] ">Connections</div>
+                        <div className="text-sm font-bold ">
                           {(selectedNodeInfo.degreeCentrality * 100).toFixed(0)}%
                         </div>
                       </div>
                     )}
                     {selectedNodeInfo.pageRank !== undefined && (
                       <div>
-                        <div className="text-[9px] text-slate-500">Influence</div>
-                        <div className="text-sm font-bold text-slate-900">
+                        <div className="text-[9px] ">Influence</div>
+                        <div className="text-sm font-bold ">
                           {(selectedNodeInfo.pageRank * 100).toFixed(0)}%
                         </div>
                       </div>
@@ -570,7 +573,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
                   <div className="text-[9px] text-slate-400 uppercase font-bold mb-1">
                     Incoming
                   </div>
-                  <div className="text-lg font-bold text-slate-700">
+                  <div className="text-lg font-bold">
                     {selectedNodeInfo.incomingEdges}
                   </div>
                 </div>
@@ -624,7 +627,7 @@ const KnowledgeGraph = React.forwardRef<KnowledgeGraphRef, KnowledgeGraphProps>(
               activeNodeId={activeNodeId}
               onNodeClick={handleNodeClick}
               onBackgroundClick={handleBackgroundClick}
-              isDark={false}
+              isDark={isDark}
               nodeStyleOverrides={nodeStyleOverrides}
               graphRef={graphRef}
             />

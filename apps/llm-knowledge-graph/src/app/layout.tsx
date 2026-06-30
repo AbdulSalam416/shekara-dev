@@ -17,7 +17,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Providers>{children}
-          {/*<Analytics />*/}
         </Providers>
         <Script
           data-goatcounter="https://mind-graph-research.goatcounter.com/count"

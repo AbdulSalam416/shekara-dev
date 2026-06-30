@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { ForceGraphData, ForceGraphLink, ForceGraphNode } from '../../types';
 import { getNodeColor, getNodeSize, getGlowLevel, hasGlowNodes } from '../../utils/nodeHelpers';
@@ -53,34 +53,61 @@ export function GraphCanvas3D({
 }: GraphCanvas3DProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const internalRef = useRef<any>(null);
-  const graphRef = externalGraphRef ?? internalRef;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const glowRingsRef = useRef<any[]>([]);
+  const collisionTimerRef = useRef<any>(null);
 
   // Clear glow ring refs when data changes so stale meshes aren't animated
   useEffect(() => {
     glowRingsRef.current = [];
   }, [data]);
 
-  // Setup collision force after mount
+  // Safe ref callback that sets up collision force and reheats simulation only when the component is ready
+  const handleRef = useCallback((fg: any) => {
+    if (collisionTimerRef.current) {
+      clearTimeout(collisionTimerRef.current);
+      collisionTimerRef.current = null;
+    }
+
+    if (externalGraphRef) {
+      externalGraphRef.current = fg;
+    } else {
+      internalRef.current = fg;
+    }
+
+    if (!fg) return;
+
+    const setupCollision = () => {
+      const currentData = fg.graphData();
+      if (currentData && currentData.nodes && currentData.nodes.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const d3 = require('d3-force');
+        fg.d3Force(
+          'collide',
+          d3
+            .forceCollide()
+            .radius(FORCE_CONFIG.collisionRadius)
+            .strength(FORCE_CONFIG.collisionStrength)
+            .iterations(FORCE_CONFIG.collisionIterations)
+        );
+        fg.d3ReheatSimulation();
+      } else {
+        // Retry in 100ms if graph data / layout is not initialized yet
+        collisionTimerRef.current = setTimeout(setupCollision, 100);
+      }
+    };
+
+    collisionTimerRef.current = setTimeout(setupCollision, ANIMATION_CONFIG.initDelay);
+  }, [externalGraphRef]);
+
+  // Clean up timers on unmount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const fg = graphRef.current;
-      if (!fg) return;
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const d3 = require('d3-force');
-      fg.d3Force(
-        'collide',
-        d3
-          .forceCollide()
-          .radius(FORCE_CONFIG.collisionRadius)
-          .strength(FORCE_CONFIG.collisionStrength)
-          .iterations(FORCE_CONFIG.collisionIterations)
-      );
-      fg.d3ReheatSimulation();
-    }, ANIMATION_CONFIG.initDelay);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      if (collisionTimerRef.current) {
+        clearTimeout(collisionTimerRef.current);
+      }
+    };
+  }, []);
 
   // Glow ring pulsing animation
   const needsAnimation = hasGlowNodes(data.nodes);
@@ -106,7 +133,7 @@ export function GraphCanvas3D({
 
   return (
     <ForceGraph3D
-      ref={graphRef}
+      ref={handleRef as any}
       graphData={data}
       nodeLabel={(node) => `${(node as ForceGraphNode).name} (${(node as ForceGraphNode).type})`}
       nodeRelSize={BASE_SIZES.node3D}

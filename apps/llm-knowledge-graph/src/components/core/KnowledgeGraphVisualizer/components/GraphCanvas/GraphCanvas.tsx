@@ -9,10 +9,8 @@ export type GraphRenderer = 'force-2d' | 'force-3d' | 'cytoscape';
 
 interface GraphCanvasProps {
   renderer: GraphRenderer;
-
   // Force-graph data (force-2d and force-3d)
   data: ForceGraphData;
-
   width: number;
   height: number;
   showLabels: boolean;
